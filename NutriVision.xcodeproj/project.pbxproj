@@ -9,13 +9,15 @@
 /* Begin PBXBuildFile section */
 		215FE4272ECD01990030561B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4262ECD01990030561B /* AppDelegate.swift */; };
 		215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4282ECD01990030561B /* SceneDelegate.swift */; };
-		215FE42B2ECD01990030561B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE42A2ECD01990030561B /* ViewController.swift */; };
+		215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE42A2ECD01990030561B /* RecordingViewController.swift */; };
 		215FE42E2ECD01990030561B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 215FE42C2ECD01990030561B /* Main.storyboard */; };
 		215FE4302ECD019C0030561B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 215FE42F2ECD019C0030561B /* Assets.xcassets */; };
 		215FE4332ECD019C0030561B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 215FE4312ECD019C0030561B /* LaunchScreen.storyboard */; };
 		215FE43E2ECD019C0030561B /* NutriVisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE43D2ECD019C0030561B /* NutriVisionTests.swift */; };
 		215FE4482ECD019C0030561B /* NutriVisionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4472ECD019C0030561B /* NutriVisionUITests.swift */; };
 		215FE44A2ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4492ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift */; };
+		4E26E3612ECE2B7600CD93C7 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26E3602ECE2B7600CD93C7 /* UserSession.swift */; };
+		4ED512D12ECD72C3001AE585 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED512D02ECD72C3001AE585 /* HomeViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +41,7 @@
 		215FE4232ECD01990030561B /* NutriVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NutriVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4262ECD01990030561B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215FE4282ECD01990030561B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		215FE42A2ECD01990030561B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		215FE42A2ECD01990030561B /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		215FE42D2ECD01990030561B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		215FE42F2ECD019C0030561B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		215FE4322ECD019C0030561B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +51,8 @@
 		215FE4432ECD019C0030561B /* NutriVisionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NutriVisionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4472ECD019C0030561B /* NutriVisionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriVisionUITests.swift; sourceTree = "<group>"; };
 		215FE4492ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriVisionUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4E26E3602ECE2B7600CD93C7 /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
+		4ED512D02ECD72C3001AE585 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,11 +105,13 @@
 			children = (
 				215FE4262ECD01990030561B /* AppDelegate.swift */,
 				215FE4282ECD01990030561B /* SceneDelegate.swift */,
-				215FE42A2ECD01990030561B /* ViewController.swift */,
+				215FE42A2ECD01990030561B /* RecordingViewController.swift */,
 				215FE42C2ECD01990030561B /* Main.storyboard */,
 				215FE42F2ECD019C0030561B /* Assets.xcassets */,
 				215FE4312ECD019C0030561B /* LaunchScreen.storyboard */,
 				215FE4342ECD019C0030561B /* Info.plist */,
+				4ED512D02ECD72C3001AE585 /* HomeViewController.swift */,
+				4E26E3602ECE2B7600CD93C7 /* UserSession.swift */,
 			);
 			path = NutriVision;
 			sourceTree = "<group>";
@@ -258,9 +264,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				215FE42B2ECD01990030561B /* ViewController.swift in Sources */,
+				215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */,
+				4E26E3612ECE2B7600CD93C7 /* UserSession.swift in Sources */,
 				215FE4272ECD01990030561B /* AppDelegate.swift in Sources */,
 				215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */,
+				4ED512D12ECD72C3001AE585 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

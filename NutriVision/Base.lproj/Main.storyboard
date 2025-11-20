@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ggv-Ua-js3" customClass="CameraView" customModule="NutriVision" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ggv-Ua-js3" customClass="ARSCNView">
                                 <rect key="frame" x="0.0" y="59" width="393" height="298.33333333333331"/>
                                 <color key="backgroundColor" systemColor="systemGreenColor"/>
                             </view>
@@ -54,7 +54,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="cameraView" destination="ggv-Ua-js3" id="5DM-4C-jk7"/>
+                        <outlet property="cameraView" destination="ggv-Ua-js3" id="Txf-33-MZ7"/>
+                        <outlet property="scrollView" destination="JO3-Ri-b8Z" id="3uN-oH-KPf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

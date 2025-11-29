@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */; };
 		215FE4272ECD01990030561B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4262ECD01990030561B /* AppDelegate.swift */; };
 		215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4282ECD01990030561B /* SceneDelegate.swift */; };
 		215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE42A2ECD01990030561B /* RecordingViewController.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ObjectDetector.mlmodel; sourceTree = "<group>"; };
 		215FE4232ECD01990030561B /* NutriVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NutriVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4262ECD01990030561B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215FE4282ECD01990030561B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				215FE4342ECD019C0030561B /* Info.plist */,
 				4ED512D02ECD72C3001AE585 /* HomeViewController.swift */,
 				4E26E3602ECE2B7600CD93C7 /* UserSession.swift */,
+				132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */,
 			);
 			path = NutriVision;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */,
 				4E26E3612ECE2B7600CD93C7 /* UserSession.swift in Sources */,
 				215FE4272ECD01990030561B /* AppDelegate.swift in Sources */,
+				132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */,
 				215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */,
 				4ED512D12ECD72C3001AE585 /* HomeViewController.swift in Sources */,
 			);
@@ -445,7 +449,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7GRQVR3UZS;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NutriVision/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -473,7 +477,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7GRQVR3UZS;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NutriVision/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

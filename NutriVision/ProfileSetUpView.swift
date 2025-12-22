@@ -50,10 +50,10 @@ struct ProfileSetupView: View {
                         )
                     
                     Text("Complete your profile")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .font(.system(size: 32, weight: .bold))
                     
                     Text(email)
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.gray)
                         .padding(.bottom, 10)
                 }
@@ -104,13 +104,6 @@ struct ProfileSetupView: View {
                 .disabled(isSaving || !isFormValid)
                 .opacity(isFormValid ? 1.0 : 0.6)
                 
-                // Info text
-                Text("This information helps us personalize your experience")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .padding(.top, 10)
             }
             .padding()
         }
@@ -210,7 +203,6 @@ struct ProfileSetupView: View {
                 alertMessage = error.localizedDescription
                 showAlert = true
             } else {
-                // Profile completed successfully
                 onProfileComplete()
             }
         }
@@ -247,7 +239,7 @@ struct ProfileButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .foregroundStyle(Color.white)
-            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .font(.system(size: 20, weight: .bold))
             .background(
                 LinearGradient(
                     stops: [.init(color: .blue, location: 1.0)],

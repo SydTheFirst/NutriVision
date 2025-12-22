@@ -15,6 +15,7 @@ enum AuthType{
 
 struct AuthView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject var appState: AppState
     
     @State private var email: String = ""
     @State private var password: String = ""
@@ -112,11 +113,9 @@ struct AuthView: View {
                     email: email,
                     userCredential: pendingUserCredential,
                     onProfileComplete: {
-                        UserSession.shared.logIn()
-                        navigateToHome()
+                        appState.needsProfileSetup = false
                     },
                     onCancel: {
-                        // Delete the auth account if user cancels
                         deleteIncompleteAccount()
                     }
                 )
@@ -131,46 +130,51 @@ struct AuthView: View {
     
     func login() {
         isLoading = true
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            isLoading = false
-            
-            if let error = error {
-                alertMessage = error.localizedDescription
-                showAlert = true
-            } else {
-                // Check if user has completed profile
-                checkProfileCompletion()
+        Auth.auth().signIn(withEmail: email, password: password) { _, error in
+            DispatchQueue.main.async {
+                isLoading = false
+
+                if let error = error {
+                    alertMessage = error.localizedDescription
+                    showAlert = true
+                    return
+                }
+                appState.loadInitialState()
             }
         }
     }
+
     
     func register() {
         isLoading = true
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            isLoading = false
-            
-            if let error = error {
-                alertMessage = error.localizedDescription
-                showAlert = true
-            } else {
-                // Store the credential temporarily
-                pendingUserCredential = result
-                // Don't mark as logged in yet - wait for profile completion
-                goToProfileSetup = true
+
+        Auth.auth().createUser(withEmail: email, password: password) { _, error in
+            DispatchQueue.main.async {
+                isLoading = false
+
+                if let error = error {
+                    alertMessage = error.localizedDescription
+                    showAlert = true
+                    return
+                }
+
+                appState.isLoggedIn = true
+                appState.needsProfileSetup = true
+                appState.email = email
             }
         }
     }
+
+
     
     func checkProfileCompletion() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         let db = Firestore.firestore()
-        db.collection("users").document(uid).getDocument { snapshot, error in
+        db.collection("Users").document(uid).getDocument { snapshot, error in
             if let data = snapshot?.data(),
                let profileCompleted = data["profileCompleted"] as? Bool,
                profileCompleted {
-                // Profile is complete - mark as logged in and navigate
-                UserSession.shared.logIn()
                 navigateToHome()
             } else {
                 // Profile not complete - go to setup
@@ -209,7 +213,7 @@ struct AuthButtonType: ButtonStyle{
             .frame(maxWidth: .infinity)
             .padding(.vertical)
             .foregroundStyle(Color.white)
-            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .font(.system(size: 20, weight: .bold))
             .background(
                 LinearGradient(stops: [
                     .init(color: .blue, location: 1.0)
@@ -254,7 +258,7 @@ struct TopView: View {
             .frame(width: 75)
         
         Text("NutriVision")
-            .font(.system(size: 35, weight: .bold, design: .rounded))
+            .font(.system(size: 35, weight: .bold))
     }
 }
 
@@ -334,7 +338,7 @@ struct BottomView: View{
         VStack(spacing: 20){
             HStack(spacing: 3){
                 Text(authType == .login ? "Don't have an account?" : "Already have an account?")
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .font(.system(size: 15, weight: .medium))
                 
                 Button {
                     if authType == .login{
@@ -348,7 +352,7 @@ struct BottomView: View{
                     }
                 } label: {
                     Text(authType == .login ? "Register" : "Login")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 15, weight: .bold))
                 }
             }
             
@@ -357,7 +361,7 @@ struct BottomView: View{
                     .frame(height: 1.5)
                     .foregroundStyle(Color.gray.opacity(0.3))
                 Text("OR")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .font(.system(size: 14, weight: .regular))
                 Rectangle()
                     .frame(height: 1.5)
                     .foregroundStyle(Color.gray.opacity(0.3))

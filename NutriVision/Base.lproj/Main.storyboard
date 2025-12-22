@@ -62,76 +62,17 @@
             </objects>
             <point key="canvasLocation" x="1808" y="-9"/>
         </scene>
-        <!--Home View Controller-->
+        <!--Home Hosting Controller-->
         <scene sceneID="eme-Wy-hSV">
             <objects>
-                <viewController id="YVo-zr-cPS" customClass="HomeViewController" customModule="NutriVision" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YVo-zr-cPS" customClass="HomeHostingController" customModule="NutriVision" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wkp-1S-uME">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fhk-iW-wsV">
-                                <rect key="frame" x="96.666666666666686" y="408.66666666666669" width="200" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="7eF-bw-Gg4"/>
-                                    <constraint firstAttribute="height" constant="35" id="Y0M-OZ-8i1"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="aKI-N5-fTK"/>
-                                    <constraint firstAttribute="width" constant="200" id="i2W-7x-OlT"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Start Recording"/>
-                                <connections>
-                                    <action selector="startRecordingTapped:" destination="YVo-zr-cPS" eventType="touchUpInside" id="N4Z-mb-wP4"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WLl-dh-24b">
-                                <rect key="frame" x="96.666666666666686" y="463.66666666666669" width="200" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="Byh-U9-VSc"/>
-                                    <constraint firstAttribute="height" constant="35" id="VfX-BT-Y7f"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="See History"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HOk-FE-3ZQ">
-                                <rect key="frame" x="96.666666666666686" y="353.66666666666669" width="200" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="0Ll-AR-i8c"/>
-                                    <constraint firstAttribute="height" constant="35" id="iqC-72-oRd"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Saved Meals"/>
-                            </button>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="aAk-1n-hCn"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="Fhk-iW-wsV" firstAttribute="centerX" secondItem="wkp-1S-uME" secondAttribute="centerX" id="0ZO-RT-fbP"/>
-                            <constraint firstItem="WLl-dh-24b" firstAttribute="top" secondItem="Fhk-iW-wsV" secondAttribute="bottom" constant="20" id="4Jb-6k-JKT"/>
-                            <constraint firstItem="HOk-FE-3ZQ" firstAttribute="centerX" secondItem="wkp-1S-uME" secondAttribute="centerX" id="8sS-sA-u6u"/>
-                            <constraint firstItem="WLl-dh-24b" firstAttribute="centerX" secondItem="wkp-1S-uME" secondAttribute="centerX" id="ccp-uU-b6g"/>
-                            <constraint firstItem="Fhk-iW-wsV" firstAttribute="centerY" secondItem="wkp-1S-uME" secondAttribute="centerY" id="tlL-ct-4GX"/>
-                            <constraint firstItem="Fhk-iW-wsV" firstAttribute="top" secondItem="HOk-FE-3ZQ" secondAttribute="bottom" constant="20" id="vOg-Dd-02I"/>
-                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Cg4-Lj-HwJ">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="3y8-t5-h21">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="kuI-yO-ZOm">
-                                <rect key="frame" x="243.66666666666663" y="4.6666666666666679" width="133.33333333333337" height="34.666666666666657"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Login/Register"/>
-                                <connections>
-                                    <action selector="loginTapped:" destination="YVo-zr-cPS" eventType="touchUpInside" id="ZKH-k5-box"/>
-                                </connections>
-                            </button>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="loginButton" destination="kuI-yO-ZOm" id="ebi-B6-THb"/>
-                        <outlet property="savedMealsButton" destination="HOk-FE-3ZQ" id="G6E-b3-Q5k"/>
-                        <outlet property="seeHistoryButton" destination="WLl-dh-24b" id="emj-2L-yYE"/>
-                    </connections>
+                    <navigationItem key="navigationItem" id="Cg4-Lj-HwJ"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDi-tg-wXD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

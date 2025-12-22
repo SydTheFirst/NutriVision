@@ -18,6 +18,14 @@
 		215FE4482ECD019C0030561B /* NutriVisionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4472ECD019C0030561B /* NutriVisionUITests.swift */; };
 		215FE44A2ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4492ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift */; };
 		4E26E3612ECE2B7600CD93C7 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26E3602ECE2B7600CD93C7 /* UserSession.swift */; };
+		4ED20A8D2EF87F0D0050B6D7 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */; };
+		4ED20A8F2EF8B3C40050B6D7 /* AuthHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */; };
+		4ED20A922EF8C6A70050B6D7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED20A912EF8C6A70050B6D7 /* FirebaseAuth */; };
+		4ED20A942EF8C6A70050B6D7 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED20A932EF8C6A70050B6D7 /* FirebaseFirestore */; };
+		4ED20A962EF8C8350050B6D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */; };
+		4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A972EF8D2740050B6D7 /* UserInfo.swift */; };
+		4ED20A9A2EF8D4AB0050B6D7 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */; };
+		4ED20A9C2EF8E16A0050B6D7 /* ProfileSetUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A9B2EF8E16A0050B6D7 /* ProfileSetUpView.swift */; };
 		4ED512D12ECD72C3001AE585 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED512D02ECD72C3001AE585 /* HomeViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +62,12 @@
 		215FE4472ECD019C0030561B /* NutriVisionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriVisionUITests.swift; sourceTree = "<group>"; };
 		215FE4492ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriVisionUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		4E26E3602ECE2B7600CD93C7 /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
+		4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthHostingController.swift; sourceTree = "<group>"; };
+		4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4ED20A972EF8D2740050B6D7 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		4ED20A9B2EF8E16A0050B6D7 /* ProfileSetUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetUpView.swift; sourceTree = "<group>"; };
 		4ED512D02ECD72C3001AE585 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -62,6 +76,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ED20A922EF8C6A70050B6D7 /* FirebaseAuth in Frameworks */,
+				4ED20A942EF8C6A70050B6D7 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +121,7 @@
 		215FE4252ECD01990030561B /* NutriVision */ = {
 			isa = PBXGroup;
 			children = (
+				4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */,
 				215FE4262ECD01990030561B /* AppDelegate.swift */,
 				215FE4282ECD01990030561B /* SceneDelegate.swift */,
 				215FE42A2ECD01990030561B /* RecordingViewController.swift */,
@@ -115,6 +132,11 @@
 				4ED512D02ECD72C3001AE585 /* HomeViewController.swift */,
 				4E26E3602ECE2B7600CD93C7 /* UserSession.swift */,
 				132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */,
+				4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */,
+				4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */,
+				4ED20A972EF8D2740050B6D7 /* UserInfo.swift */,
+				4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */,
+				4ED20A9B2EF8E16A0050B6D7 /* ProfileSetUpView.swift */,
 			);
 			path = NutriVision;
 			sourceTree = "<group>";
@@ -152,6 +174,10 @@
 			dependencies = (
 			);
 			name = NutriVision;
+			packageProductDependencies = (
+				4ED20A912EF8C6A70050B6D7 /* FirebaseAuth */,
+				4ED20A932EF8C6A70050B6D7 /* FirebaseFirestore */,
+			);
 			productName = NutriVision;
 			productReference = 215FE4232ECD01990030561B /* NutriVision.app */;
 			productType = "com.apple.product-type.application";
@@ -224,6 +250,9 @@
 				Base,
 			);
 			mainGroup = 215FE41A2ECD01990030561B;
+			packageReferences = (
+				4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 215FE4242ECD01990030561B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -241,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				215FE4332ECD019C0030561B /* LaunchScreen.storyboard in Resources */,
+				4ED20A962EF8C8350050B6D7 /* GoogleService-Info.plist in Resources */,
 				215FE4302ECD019C0030561B /* Assets.xcassets in Resources */,
 				215FE42E2ECD01990030561B /* Main.storyboard in Resources */,
 			);
@@ -267,11 +297,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ED20A8F2EF8B3C40050B6D7 /* AuthHostingController.swift in Sources */,
+				4ED20A9A2EF8D4AB0050B6D7 /* DataManager.swift in Sources */,
+				4ED20A8D2EF87F0D0050B6D7 /* AuthView.swift in Sources */,
 				215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */,
 				4E26E3612ECE2B7600CD93C7 /* UserSession.swift in Sources */,
 				215FE4272ECD01990030561B /* AppDelegate.swift in Sources */,
 				132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */,
 				215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */,
+				4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */,
+				4ED20A9C2EF8E16A0050B6D7 /* ProfileSetUpView.swift in Sources */,
 				4ED512D12ECD72C3001AE585 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -457,6 +492,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -485,6 +521,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -610,6 +647,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = exactVersion;
+				version = 10.25.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4ED20A912EF8C6A70050B6D7 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		4ED20A932EF8C6A70050B6D7 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 215FE41B2ECD01990030561B /* Project object */;
 }

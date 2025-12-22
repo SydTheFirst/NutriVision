@@ -12,7 +12,6 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var seeHistoryButton: UIButton!
     @IBOutlet weak var savedMealsButton: UIButton!
     @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var registerButton: UIButton!
 
 
     override func viewDidLoad() {
@@ -40,21 +39,12 @@ class HomeViewController: UIViewController {
 
         // Login / Register only if logged out
         loginButton.isHidden = loggedIn
-        registerButton.isHidden = loggedIn
     }
     
     @IBAction func loginTapped(_ sender: UIButton) {
-        // TODO: implement your login screen
-        // For now, we simulate login:
-        UserSession.shared.logIn()
-        updateUI()
+        let vc = storyboard?.instantiateViewController(withIdentifier: "AuthVC") as! AuthHostingController
+        navigationController?.pushViewController(vc, animated: true)
     }
 
-    @IBAction func registerTapped(_ sender: UIButton) {
-        // TODO: implement your register screen
-        // Simulate success:
-        UserSession.shared.logIn()
-        updateUI()
-    }
 
 }

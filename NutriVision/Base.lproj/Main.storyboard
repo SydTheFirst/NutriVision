@@ -115,23 +115,12 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Cg4-Lj-HwJ">
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="MPT-FP-eMy">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="837-sT-6cd">
-                                <rect key="frame" x="16" y="4.6666666666666679" width="87" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Register"/>
-                                <connections>
-                                    <action selector="registerTapped:" destination="YVo-zr-cPS" eventType="touchUpInside" id="CSk-DF-C1q"/>
-                                </connections>
-                            </button>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="plain" id="3y8-t5-h21">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="kuI-yO-ZOm">
-                                <rect key="frame" x="311" y="4.6666666666666679" width="66" height="34.666666666666657"/>
+                                <rect key="frame" x="243.66666666666663" y="4.6666666666666679" width="133.33333333333337" height="34.666666666666657"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Login"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Login/Register"/>
                                 <connections>
                                     <action selector="loginTapped:" destination="YVo-zr-cPS" eventType="touchUpInside" id="ZKH-k5-box"/>
                                 </connections>
@@ -140,7 +129,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="loginButton" destination="kuI-yO-ZOm" id="ebi-B6-THb"/>
-                        <outlet property="registerButton" destination="837-sT-6cd" id="MjU-cl-Qt1"/>
                         <outlet property="savedMealsButton" destination="HOk-FE-3ZQ" id="G6E-b3-Q5k"/>
                         <outlet property="seeHistoryButton" destination="WLl-dh-24b" id="emj-2L-yYE"/>
                     </connections>
@@ -148,6 +136,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDi-tg-wXD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="162.59541984732823" y="3.5211267605633805"/>
+        </scene>
+        <!--Auth Hosting Controller-->
+        <scene sceneID="svg-A2-aCf">
+            <objects>
+                <viewController storyboardIdentifier="AuthVC" id="95E-Pe-oIy" customClass="AuthHostingController" customModule="NutriVision" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wtY-u2-Fkn">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Tu8-48-h8U"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0IG-Ke-gGm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2110" y="-4"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="iSt-VE-YCS">

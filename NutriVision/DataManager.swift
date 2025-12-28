@@ -29,7 +29,7 @@ class DataManager: ObservableObject {
                 for document in snapshot.documents{
                     let data = document.data()
                     
-                    let id = data["id"] as? Int
+                    let id = data["id"] as? String ?? ""
                     let name = data["name"] as? String ?? ""
                     let email = data["email"] as? String ?? ""
                     let age = data["age"] as? Int

@@ -194,6 +194,9 @@ struct ProfileView: View {
                 Text("This action is permanent and cannot be undone. All your data will be deleted.")
             }
         }
+        .onAppear {
+            fetchUserData()
+        }
     }
     
     func startEditing() {
@@ -230,6 +233,28 @@ struct ProfileView: View {
                 )
                 isEditing = false
             }
+        }
+    }
+    
+    func fetchUserData() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let db = Firestore.firestore()
+        
+        db.collection("Users").document(uid).addSnapshotListener { document, error in
+            guard let document = document, document.exists,
+                  let data = document.data() else {
+                print("Document does not exist")
+                return
+            }
+            
+            self.user = User(
+                id: uid,
+                name: data["name"] as? String ?? "N/A",
+                email: data["email"] as? String ?? "",
+                age: data["age"] as? Int,
+                height: data["height"] as? Int,
+                weight: (data["weight"] as? NSNumber)?.doubleValue ?? 0.0
+            )
         }
     }
     

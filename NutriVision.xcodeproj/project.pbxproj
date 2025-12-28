@@ -3,24 +3,36 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */; };
 		215FE4272ECD01990030561B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4262ECD01990030561B /* AppDelegate.swift */; };
 		215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4282ECD01990030561B /* SceneDelegate.swift */; };
-		215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE42A2ECD01990030561B /* RecordingViewController.swift */; };
 		215FE42E2ECD01990030561B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 215FE42C2ECD01990030561B /* Main.storyboard */; };
 		215FE4302ECD019C0030561B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 215FE42F2ECD019C0030561B /* Assets.xcassets */; };
 		215FE4332ECD019C0030561B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 215FE4312ECD019C0030561B /* LaunchScreen.storyboard */; };
 		215FE43E2ECD019C0030561B /* NutriVisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE43D2ECD019C0030561B /* NutriVisionTests.swift */; };
 		215FE4482ECD019C0030561B /* NutriVisionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4472ECD019C0030561B /* NutriVisionUITests.swift */; };
 		215FE44A2ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4492ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift */; };
+		4E21A7442EFEF949006E8737 /* NutritionStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7432EFEF949006E8737 /* NutritionStatsView.swift */; };
+		4E21A7462EFF0452006E8737 /* NutritionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7452EFF0452006E8737 /* NutritionViewModel.swift */; };
+		4E21A7482EFF0478006E8737 /* DashboardStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7472EFF0478006E8737 /* DashboardStatsView.swift */; };
+		4E21A74A2EFF355C006E8737 /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7492EFF355C006E8737 /* Meal.swift */; };
+		4E21A74C2EFF3590006E8737 /* SavedMealsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A74B2EFF3590006E8737 /* SavedMealsView.swift */; };
+		4E21A74E2EFF4BF1006E8737 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A74D2EFF4BF1006E8737 /* Ingredient.swift */; };
+		4E21A7502EFF5588006E8737 /* DailyNutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A74F2EFF5588006E8737 /* DailyNutrition.swift */; };
+		4E21A7522EFF675D006E8737 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7512EFF675D006E8737 /* RecordingView.swift */; };
+		4E21A7542EFF68C2006E8737 /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7532EFF68C2006E8737 /* ARCameraView.swift */; };
+		4E21A7582F007B02006E8737 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A7572F007B02006E8737 /* HistoryView.swift */; };
+		4E21A75E2F00AB8A006E8737 /* AISuggestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A75D2F00AB8A006E8737 /* AISuggestionViewModel.swift */; };
+		4E21A7682F00BDC6006E8737 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E21A7672F00BDC6006E8737 /* FirebaseAuth */; };
+		4E21A76A2F00BDC6006E8737 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E21A7692F00BDC6006E8737 /* FirebaseFirestore */; };
+		4E21A76C2F00BDC6006E8737 /* FirebaseVertexAI-Preview in Frameworks */ = {isa = PBXBuildFile; productRef = 4E21A76B2F00BDC6006E8737 /* FirebaseVertexAI-Preview */; };
+		4E21A76E2F00CF55006E8737 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A76D2F00CF55006E8737 /* PreviewData.swift */; };
 		4ED20A8D2EF87F0D0050B6D7 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */; };
 		4ED20A8F2EF8B3C40050B6D7 /* AuthHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */; };
-		4ED20A922EF8C6A70050B6D7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED20A912EF8C6A70050B6D7 /* FirebaseAuth */; };
-		4ED20A942EF8C6A70050B6D7 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED20A932EF8C6A70050B6D7 /* FirebaseFirestore */; };
 		4ED20A962EF8C8350050B6D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */; };
 		4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A972EF8D2740050B6D7 /* UserInfo.swift */; };
 		4ED20A9A2EF8D4AB0050B6D7 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */; };
@@ -54,7 +66,6 @@
 		215FE4232ECD01990030561B /* NutriVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NutriVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4262ECD01990030561B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215FE4282ECD01990030561B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		215FE42A2ECD01990030561B /* RecordingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		215FE42D2ECD01990030561B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		215FE42F2ECD019C0030561B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		215FE4322ECD019C0030561B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -64,6 +75,18 @@
 		215FE4432ECD019C0030561B /* NutriVisionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NutriVisionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4472ECD019C0030561B /* NutriVisionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriVisionUITests.swift; sourceTree = "<group>"; };
 		215FE4492ECD019C0030561B /* NutriVisionUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriVisionUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4E21A7432EFEF949006E8737 /* NutritionStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionStatsView.swift; sourceTree = "<group>"; };
+		4E21A7452EFF0452006E8737 /* NutritionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionViewModel.swift; sourceTree = "<group>"; };
+		4E21A7472EFF0478006E8737 /* DashboardStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardStatsView.swift; sourceTree = "<group>"; };
+		4E21A7492EFF355C006E8737 /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
+		4E21A74B2EFF3590006E8737 /* SavedMealsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMealsView.swift; sourceTree = "<group>"; };
+		4E21A74D2EFF4BF1006E8737 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
+		4E21A74F2EFF5588006E8737 /* DailyNutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyNutrition.swift; sourceTree = "<group>"; };
+		4E21A7512EFF675D006E8737 /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
+		4E21A7532EFF68C2006E8737 /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
+		4E21A7572F007B02006E8737 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		4E21A75D2F00AB8A006E8737 /* AISuggestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISuggestionViewModel.swift; sourceTree = "<group>"; };
+		4E21A76D2F00CF55006E8737 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthHostingController.swift; sourceTree = "<group>"; };
 		4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -82,8 +105,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4ED20A922EF8C6A70050B6D7 /* FirebaseAuth in Frameworks */,
-				4ED20A942EF8C6A70050B6D7 /* FirebaseFirestore in Frameworks */,
+				4E21A76C2F00BDC6006E8737 /* FirebaseVertexAI-Preview in Frameworks */,
+				4E21A7682F00BDC6006E8737 /* FirebaseAuth in Frameworks */,
+				4E21A76A2F00BDC6006E8737 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +154,6 @@
 				4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */,
 				215FE4262ECD01990030561B /* AppDelegate.swift */,
 				215FE4282ECD01990030561B /* SceneDelegate.swift */,
-				215FE42A2ECD01990030561B /* RecordingViewController.swift */,
 				215FE42C2ECD01990030561B /* Main.storyboard */,
 				215FE42F2ECD019C0030561B /* Assets.xcassets */,
 				215FE4312ECD019C0030561B /* LaunchScreen.storyboard */,
@@ -146,6 +169,18 @@
 				4ED20AA12EF9C4BF0050B6D7 /* ProfileView.swift */,
 				4ED20AA32EF9CB5F0050B6D7 /* AppState.swift */,
 				4ED20AA52EF9CCDA0050B6D7 /* RootView.swift */,
+				4E21A7432EFEF949006E8737 /* NutritionStatsView.swift */,
+				4E21A7452EFF0452006E8737 /* NutritionViewModel.swift */,
+				4E21A7472EFF0478006E8737 /* DashboardStatsView.swift */,
+				4E21A7492EFF355C006E8737 /* Meal.swift */,
+				4E21A74B2EFF3590006E8737 /* SavedMealsView.swift */,
+				4E21A74D2EFF4BF1006E8737 /* Ingredient.swift */,
+				4E21A74F2EFF5588006E8737 /* DailyNutrition.swift */,
+				4E21A7512EFF675D006E8737 /* RecordingView.swift */,
+				4E21A7532EFF68C2006E8737 /* ARCameraView.swift */,
+				4E21A7572F007B02006E8737 /* HistoryView.swift */,
+				4E21A75D2F00AB8A006E8737 /* AISuggestionViewModel.swift */,
+				4E21A76D2F00CF55006E8737 /* PreviewData.swift */,
 			);
 			path = NutriVision;
 			sourceTree = "<group>";
@@ -184,8 +219,9 @@
 			);
 			name = NutriVision;
 			packageProductDependencies = (
-				4ED20A912EF8C6A70050B6D7 /* FirebaseAuth */,
-				4ED20A932EF8C6A70050B6D7 /* FirebaseFirestore */,
+				4E21A7672F00BDC6006E8737 /* FirebaseAuth */,
+				4E21A7692F00BDC6006E8737 /* FirebaseFirestore */,
+				4E21A76B2F00BDC6006E8737 /* FirebaseVertexAI-Preview */,
 			);
 			productName = NutriVision;
 			productReference = 215FE4232ECD01990030561B /* NutriVision.app */;
@@ -251,7 +287,7 @@
 				};
 			};
 			buildConfigurationList = 215FE41E2ECD01990030561B /* Build configuration list for PBXProject "NutriVision" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -260,7 +296,7 @@
 			);
 			mainGroup = 215FE41A2ECD01990030561B;
 			packageReferences = (
-				4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 215FE4242ECD01990030561B /* Products */;
 			projectDirPath = "";
@@ -306,20 +342,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E21A76E2F00CF55006E8737 /* PreviewData.swift in Sources */,
 				4ED20A8F2EF8B3C40050B6D7 /* AuthHostingController.swift in Sources */,
 				4ED20A9A2EF8D4AB0050B6D7 /* DataManager.swift in Sources */,
 				4ED20A8D2EF87F0D0050B6D7 /* AuthView.swift in Sources */,
-				215FE42B2ECD01990030561B /* RecordingViewController.swift in Sources */,
+				4E21A74C2EFF3590006E8737 /* SavedMealsView.swift in Sources */,
+				4E21A7482EFF0478006E8737 /* DashboardStatsView.swift in Sources */,
+				4E21A74A2EFF355C006E8737 /* Meal.swift in Sources */,
+				4E21A75E2F00AB8A006E8737 /* AISuggestionViewModel.swift in Sources */,
+				4E21A7582F007B02006E8737 /* HistoryView.swift in Sources */,
 				215FE4272ECD01990030561B /* AppDelegate.swift in Sources */,
 				4ED20AA02EF9C47F0050B6D7 /* HomeController.swift in Sources */,
+				4E21A7542EFF68C2006E8737 /* ARCameraView.swift in Sources */,
 				132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */,
 				4ED20A9E2EF9C3C00050B6D7 /* HomeHostingController.swift in Sources */,
+				4E21A7442EFEF949006E8737 /* NutritionStatsView.swift in Sources */,
+				4E21A74E2EFF4BF1006E8737 /* Ingredient.swift in Sources */,
 				4ED20AA42EF9CB5F0050B6D7 /* AppState.swift in Sources */,
 				215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */,
+				4E21A7462EFF0452006E8737 /* NutritionViewModel.swift in Sources */,
 				4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */,
 				4ED20A9C2EF8E16A0050B6D7 /* ProfileSetUpView.swift in Sources */,
+				4E21A7522EFF675D006E8737 /* RecordingView.swift in Sources */,
 				4ED20AA22EF9C4BF0050B6D7 /* ProfileView.swift in Sources */,
 				4ED20AA62EF9CCDA0050B6D7 /* RootView.swift in Sources */,
+				4E21A7502EFF5588006E8737 /* DailyNutrition.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,26 +708,31 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = exactVersion;
-				version = 10.25.0;
+				version = 10.28.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4ED20A912EF8C6A70050B6D7 /* FirebaseAuth */ = {
+		4E21A7672F00BDC6006E8737 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		4ED20A932EF8C6A70050B6D7 /* FirebaseFirestore */ = {
+		4E21A7692F00BDC6006E8737 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4ED20A902EF8C6A70050B6D7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		4E21A76B2F00BDC6006E8737 /* FirebaseVertexAI-Preview */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseVertexAI-Preview";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

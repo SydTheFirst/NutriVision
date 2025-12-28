@@ -14,12 +14,8 @@ final class AppState: ObservableObject {
     @Published var isLoggedIn = false
     @Published var needsProfileSetup = false
     @Published var email: String?
+    
 
-    init() {
-        Auth.auth().addStateDidChangeListener { _, user in
-            self.isLoggedIn = user != nil
-        }
-    }
 
     func loadInitialState() {
         guard let user = Auth.auth().currentUser else {

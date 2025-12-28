@@ -1,10 +1,9 @@
 //
-//  HomeController.swift
+//  HomeView.swift
 //  NutriVision
 //
 //  Created by Vasco Zambujo on 22/12/2025.
 //
-
 
 import SwiftUI
 import FirebaseAuth
@@ -16,128 +15,140 @@ struct HomeView: View {
     @State private var currentUser: User?
     @State private var isLoading = true
     @EnvironmentObject var appState: AppState
-
     
+    @State private var mealHistory: [Meal] = []
+
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Background
-                Color(colorScheme == .light ? .systemGroupedBackground : .black)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 30) {
-                    // App Logo/Title
-                    VStack(spacing: 10) {
-                        Image(systemName: "camera.viewfinder")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 80)
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.blue, .blue.opacity(0.7)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                        
-                        Text("NutriVision")
-                            .font(.system(size: 40, weight: .bold))
-                        
-                        Text("Track your nutrition with AI")
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.top, 40)
+            NavigationStack {
+                ZStack {
+                    // Background
+                    Color(colorScheme == .light ? .systemGroupedBackground : .black)
+                        .ignoresSafeArea()
                     
-                    Spacer()
-                    
-                    // Main Actions
-                    VStack(spacing: 20) {
-                        // Start Recording - Always visible
-                        NavigationLink(destination: RecordingViewWrapper()) {
-                            HomeActionButton(
-                                icon: "record.circle.fill",
-                                title: "Start Recording",
-                                subtitle: "Scan your meal",
-                                color: .blue
-                            )
-                        }
-                        
-                        if appState.isLoggedIn {
-                            NavigationLink(destination: HistoryView()) {
-                                HomeActionButton(
-                                    icon: "clock.fill",
-                                    title: "See History",
-                                    subtitle: "View past meals",
-                                    color: .green
-                                )
+                    // Use a ScrollView to ensure it fits all screen sizes (Pro vs Mini/SE)
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 20) { // Reduced spacing from 30 to 20
+                            
+                            // 1. App Logo/Title Section
+                            VStack(spacing: 8) {
+                                Text("NutriVision")
+                                    .font(.system(size: 34, weight: .bold, design: .rounded)) // Slightly smaller
+                                
+                                Text("Track your nutrition with AI")
+                                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.top, 10)
+                            
+                            // 2. Nutrition Insights Card (The Chart)
+                            if appState.isLoggedIn {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack {
+                                        Text("Nutrition Insights")
+                                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                                        Spacer()
+                                        NavigationLink(destination: NutritionStatsView()) {
+                                            Text("Full Report")
+                                                .font(.system(size: 14, weight: .semibold))
+                                                .foregroundColor(.blue)
+                                        }
+                                    }
+                                    .padding(.horizontal, 5)
+
+                                    // The specialized Dashboard Chart
+                                    DashboardStatsView()
+                                        .frame(height: 260) // Slightly shorter to save space
+                                        .cornerRadius(20)
+                                }
+                                .padding(.horizontal)
                             }
                             
-                            NavigationLink(destination: SavedMealsView()) {
-                                HomeActionButton(
-                                    icon: "bookmark.fill",
-                                    title: "Saved Meals",
-                                    subtitle: "Your favorites",
-                                    color: .orange
-                                )
-                            }
-                        }
-                        
-                        // Login Button - Only for logged out users
-                        if !appState.isLoggedIn {
-                            NavigationLink(destination: AuthView()) {
-                                HomeActionButton(
-                                    icon: "person.circle.fill",
-                                    title: "Login / Register",
-                                    subtitle: "Access all features",
-                                    color: .purple
-                                )
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                    
-                    Spacer()
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if appState.isLoggedIn {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            showingProfile = true
-                        } label: {
-                            Image(systemName: "person.crop.circle.fill")
-                                .font(.system(size: 28))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.blue, .blue.opacity(0.7)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
+                            // 3. Main Actions
+                            VStack(spacing: 12) { // Reduced spacing between buttons
+                                // Start Recording
+                                NavigationLink(destination: RecordingView()) {
+                                    HomeActionButton(
+                                        icon: "record.circle.fill",
+                                        title: "Start Recording",
+                                        subtitle: "Scan your meal",
+                                        color: .blue
                                     )
-                                )
+                                }
+                                
+                                if appState.isLoggedIn {
+                                    NavigationLink(destination: HistoryView()) {
+                                        HomeActionButton(
+                                            icon: "clock.fill",
+                                            title: "See History",
+                                            subtitle: "View past meals",
+                                            color: .green
+                                        )
+                                    }
+                                    
+                                    NavigationLink(destination: SavedMealsView()) {
+                                        HomeActionButton(
+                                            icon: "bookmark.fill",
+                                            title: "Saved Meals",
+                                            subtitle: "Your favorites",
+                                            color: .orange
+                                        )
+                                    }
+                                    
+                                    NavigationLink(destination: AISuggestionView(history: mealHistory)) {
+                                        HomeActionButton(
+                                            icon: "sparkles",
+                                            title: "AI Suggestions",
+                                            subtitle: "Smart meal ideas based on your diet",
+                                            color: .red
+                                        )
+                                    }
+                                } else {
+                                    NavigationLink(destination: AuthView()) {
+                                        HomeActionButton(
+                                            icon: "person.circle.fill",
+                                            title: "Login / Register",
+                                            subtitle: "Access all features",
+                                            color: .purple
+                                        )
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.bottom, 20) // Extra padding at the bottom for scrolling clearance
                         }
                     }
                 }
-            }
-            .sheet(isPresented: $showingProfile) {
-                ProfileView(user: $currentUser)
-            }
-            .onAppear {
-                if appState.isLoggedIn {
-                    fetchCurrentUser()
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    if appState.isLoggedIn {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                showingProfile = true
+                            } label: {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                    }
+                }
+                .sheet(isPresented: $showingProfile) {
+                    ProfileView(user: $currentUser)
+                }
+                .onAppear {
+                    if appState.isLoggedIn {
+                        fetchUserDataAndMeals()
+                    }
                 }
             }
         }
-    }
     
-    func fetchCurrentUser() {
+    func fetchUserDataAndMeals() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        
         let db = Firestore.firestore()
-        db.collection("Users").document(uid).getDocument { snapshot, error in
-            isLoading = false
-            
+        
+        // 1. Fetch User Data (Your existing logic)
+        db.collection("Users").document(uid).getDocument { snapshot, _ in
             if let data = snapshot?.data() {
                 currentUser = User(
                     id: nil,
@@ -149,6 +160,18 @@ struct HomeView: View {
                 )
             }
         }
+        
+        // 2. Fetch Meals for the AI (The logic from your HistoryView)
+        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+        
+        db.collection("Users").document(uid).collection("Meals")
+            .whereField("date", isGreaterThan: sevenDaysAgo)
+            .addSnapshotListener { snapshot, error in
+                guard let documents = snapshot?.documents else { return }
+                // Store the flat list here to pass to AI Suggestions
+                self.mealHistory = documents.compactMap { try? $0.data(as: Meal.self) }
+                self.isLoading = false
+            }
     }
 }
 
@@ -157,64 +180,38 @@ struct HomeActionButton: View {
     let title: String
     let subtitle: String
     let color: Color
-    
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        HStack(spacing: 20) {
+        HStack(spacing: 15) {
             Image(systemName: icon)
-                .font(.system(size: 35))
+                .font(.system(size: 28))
                 .foregroundColor(color)
-                .frame(width: 50)
+                .frame(width: 44)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(colorScheme == .light ? .primary : .white)
                 
                 Text(subtitle)
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(.gray)
             }
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.gray)
         }
-        .padding()
+        .padding(.vertical, 12) // Slightly tighter padding
+        .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(colorScheme == .light ? Color.white : Color(uiColor: .systemGray6))
-                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+                .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
         )
     }
 }
 
-// Wrapper for existing UIKit RecordingViewController
-struct RecordingViewWrapper: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> RecordingViewController {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        return storyboard.instantiateViewController(withIdentifier: "RecordingVC") as! RecordingViewController
-    }
-    
-    func updateUIViewController(_ uiViewController: RecordingViewController, context: Context) {}
-}
-
-// Placeholder views - implement these based on your needs
-struct HistoryView: View {
-    var body: some View {
-        Text("History View")
-            .font(.title)
-            .navigationTitle("History")
-    }
-}
-
-struct SavedMealsView: View {
-    var body: some View {
-        Text("Saved Meals View")
-            .font(.title)
-            .navigationTitle("Saved Meals")
-    }
-}

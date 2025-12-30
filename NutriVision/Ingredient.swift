@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 struct Ingredient: Identifiable, Equatable, Codable, Hashable {
     var id = UUID()
@@ -16,6 +17,10 @@ struct Ingredient: Identifiable, Equatable, Codable, Hashable {
     let protein: Double
     let carbs: Double
     let fats: Double
+    
+    // Runtime-only
+    var detectedFrames: Int = 0
+    var areaScore: CGFloat = 0.0
     
     enum CodingKeys: String, CodingKey {
         case name, amount, unit, calories, protein, carbs, fats
@@ -55,5 +60,7 @@ struct Ingredient: Identifiable, Equatable, Codable, Hashable {
         self.protein = 0
         self.carbs = 0
         self.fats = 0
+        self.detectedFrames = 0
+        self.areaScore = 0.0
     }
 }

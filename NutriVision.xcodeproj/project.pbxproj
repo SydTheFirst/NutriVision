@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */; };
+		134A45122F0434FD00CB3568 /* DetectedIngredientRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134A45112F0434FD00CB3568 /* DetectedIngredientRow.swift */; };
+		134A45142F0438AC00CB3568 /* SummaryPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134A45132F0438AC00CB3568 /* SummaryPill.swift */; };
+		134A451C2F0464E200CB3568 /* food_90_conf.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 134A451B2F0464E200CB3568 /* food_90_conf.mlpackage */; };
+		13637DB42F02CC030072E0F2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13637DB32F02CC030072E0F2 /* GoogleService-Info.plist */; };
 		215FE4272ECD01990030561B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4262ECD01990030561B /* AppDelegate.swift */; };
 		215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4282ECD01990030561B /* SceneDelegate.swift */; };
 		215FE42E2ECD01990030561B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 215FE42C2ECD01990030561B /* Main.storyboard */; };
@@ -33,7 +37,6 @@
 		4E21A76E2F00CF55006E8737 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E21A76D2F00CF55006E8737 /* PreviewData.swift */; };
 		4ED20A8D2EF87F0D0050B6D7 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */; };
 		4ED20A8F2EF8B3C40050B6D7 /* AuthHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */; };
-		4ED20A962EF8C8350050B6D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */; };
 		4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A972EF8D2740050B6D7 /* UserInfo.swift */; };
 		4ED20A9A2EF8D4AB0050B6D7 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */; };
 		4ED20A9C2EF8E16A0050B6D7 /* ProfileSetUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED20A9B2EF8E16A0050B6D7 /* ProfileSetUpView.swift */; };
@@ -63,6 +66,10 @@
 
 /* Begin PBXFileReference section */
 		132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ObjectDetector.mlmodel; sourceTree = "<group>"; };
+		134A45112F0434FD00CB3568 /* DetectedIngredientRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedIngredientRow.swift; sourceTree = "<group>"; };
+		134A45132F0438AC00CB3568 /* SummaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryPill.swift; sourceTree = "<group>"; };
+		134A451B2F0464E200CB3568 /* food_90_conf.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = food_90_conf.mlpackage; sourceTree = "<group>"; };
+		13637DB32F02CC030072E0F2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		215FE4232ECD01990030561B /* NutriVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NutriVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4262ECD01990030561B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215FE4282ECD01990030561B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -89,7 +96,6 @@
 		4E21A76D2F00CF55006E8737 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		4ED20A8C2EF87F0D0050B6D7 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthHostingController.swift; sourceTree = "<group>"; };
-		4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4ED20A972EF8D2740050B6D7 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		4ED20A9B2EF8E16A0050B6D7 /* ProfileSetUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetUpView.swift; sourceTree = "<group>"; };
@@ -151,7 +157,8 @@
 		215FE4252ECD01990030561B /* NutriVision */ = {
 			isa = PBXGroup;
 			children = (
-				4ED20A952EF8C8350050B6D7 /* GoogleService-Info.plist */,
+				134A45132F0438AC00CB3568 /* SummaryPill.swift */,
+				134A45112F0434FD00CB3568 /* DetectedIngredientRow.swift */,
 				215FE4262ECD01990030561B /* AppDelegate.swift */,
 				215FE4282ECD01990030561B /* SceneDelegate.swift */,
 				215FE42C2ECD01990030561B /* Main.storyboard */,
@@ -163,6 +170,7 @@
 				4ED20A8E2EF8B3C40050B6D7 /* AuthHostingController.swift */,
 				4ED20A972EF8D2740050B6D7 /* UserInfo.swift */,
 				4ED20A992EF8D4AB0050B6D7 /* DataManager.swift */,
+				13637DB32F02CC030072E0F2 /* GoogleService-Info.plist */,
 				4ED20A9B2EF8E16A0050B6D7 /* ProfileSetUpView.swift */,
 				4ED20A9D2EF9C3C00050B6D7 /* HomeHostingController.swift */,
 				4ED20A9F2EF9C47F0050B6D7 /* HomeController.swift */,
@@ -181,6 +189,7 @@
 				4E21A7572F007B02006E8737 /* HistoryView.swift */,
 				4E21A75D2F00AB8A006E8737 /* AISuggestionViewModel.swift */,
 				4E21A76D2F00CF55006E8737 /* PreviewData.swift */,
+				134A451B2F0464E200CB3568 /* food_90_conf.mlpackage */,
 			);
 			path = NutriVision;
 			sourceTree = "<group>";
@@ -315,7 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				215FE4332ECD019C0030561B /* LaunchScreen.storyboard in Resources */,
-				4ED20A962EF8C8350050B6D7 /* GoogleService-Info.plist in Resources */,
+				13637DB42F02CC030072E0F2 /* GoogleService-Info.plist in Resources */,
 				215FE4302ECD019C0030561B /* Assets.xcassets in Resources */,
 				215FE42E2ECD01990030561B /* Main.storyboard in Resources */,
 			);
@@ -351,6 +360,8 @@
 				4E21A74A2EFF355C006E8737 /* Meal.swift in Sources */,
 				4E21A75E2F00AB8A006E8737 /* AISuggestionViewModel.swift in Sources */,
 				4E21A7582F007B02006E8737 /* HistoryView.swift in Sources */,
+				134A45122F0434FD00CB3568 /* DetectedIngredientRow.swift in Sources */,
+				134A45142F0438AC00CB3568 /* SummaryPill.swift in Sources */,
 				215FE4272ECD01990030561B /* AppDelegate.swift in Sources */,
 				4ED20AA02EF9C47F0050B6D7 /* HomeController.swift in Sources */,
 				4E21A7542EFF68C2006E8737 /* ARCameraView.swift in Sources */,
@@ -362,6 +373,7 @@
 				215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */,
 				4E21A7462EFF0452006E8737 /* NutritionViewModel.swift in Sources */,
 				4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */,
+				134A451C2F0464E200CB3568 /* food_90_conf.mlpackage in Sources */,
 				4ED20A9C2EF8E16A0050B6D7 /* ProfileSetUpView.swift in Sources */,
 				4E21A7522EFF675D006E8737 /* RecordingView.swift in Sources */,
 				4ED20AA22EF9C4BF0050B6D7 /* ProfileView.swift in Sources */,

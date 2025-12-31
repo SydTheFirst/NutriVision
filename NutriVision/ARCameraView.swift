@@ -62,7 +62,7 @@ struct ARCameraView: UIViewRepresentable {
         }
         
         private func setupVision() {
-            guard let modelURL = Bundle.main.url(forResource: "food_90_conf", withExtension: "mlmodelc"),
+            guard let modelURL = Bundle.main.url(forResource: "best_fine_tuned", withExtension: "mlmodelc"),
                   let visionModel = try? VNCoreMLModel(for: MLModel(contentsOf: modelURL)) else {
                 print("Failed to load ML model")
                 return

@@ -52,6 +52,8 @@ struct ARCameraView: UIViewRepresentable {
         
         private let nutritionService = NutritionService()
         private var pendingLabels = Set<String>()
+        
+        private var detectedIngredientNames = Set<String>()
 
         init(_ parent: ARCameraView) {
             self.parent = parent
@@ -79,36 +81,43 @@ struct ARCameraView: UIViewRepresentable {
             try? handler.perform(self.requests)
 
             if let results = self.requests.first?.results as? [VNRecognizedObjectObservation] {
-                handleDetections(results, frame: frame)
+                handleDetections(results)
             }
         }
 
-        private func handleDetections(_ observations: [VNRecognizedObjectObservation], frame: ARFrame) {
-            // Group detections to avoid redundant API calls in a single frame
+        private func handleDetections(
+            _ observations: [VNRecognizedObjectObservation]
+        ) {
             var weightsPerLabel: [String: Double] = [:]
 
             for observation in observations {
                 guard let label = observation.labels.first?.identifier else { continue }
+                guard observation.confidence > 0.5 else { continue }
                 
                 // Use the raycast-based weight estimation
                 let weight = estimateWeight(for: observation)
-                
-                // Track the largest/best detection for this label in the current frame
-                weightsPerLabel[label] = max(weightsPerLabel[label] ?? 0, weight)
+                weightsPerLabel[label, default: 0.0] += weight
             }
 
+            guard !weightsPerLabel.isEmpty else { return }
+
             DispatchQueue.main.async {
-                for (label, weight) in weightsPerLabel {
-                    if let index = self.parent.detectedIngredients.firstIndex(where: { $0.name == label }) {
-                        // Update existing score with the new weight estimation
-                        self.parent.detectedIngredients[index].areaScore = CGFloat(weight)
+                for (label, frameWeight) in weightsPerLabel {
+
+                    if self.detectedIngredientNames.contains(label) {
+                        if let index = self.parent.detectedIngredients.firstIndex(where: { $0.name == label }) {
+                            self.parent.detectedIngredients[index].areaScore =
+                                max(self.parent.detectedIngredients[index].areaScore,
+                                    CGFloat(frameWeight))
+                        }
                     } else {
-                        // New ingredient found
-                        let newIngredient = Ingredient(aiDetectedName: label)
-                        self.parent.detectedIngredients.append(newIngredient)
-                        
-                        // Fetch real data using the estimated weight
-                        self.fetchNutritionForLabel(label, weight: weight)
+                        self.detectedIngredientNames.insert(label)
+
+                        var ingredient = Ingredient(aiDetectedName: label)
+                        ingredient.areaScore = CGFloat(frameWeight)
+                        self.parent.detectedIngredients.append(ingredient)
+
+                        self.fetchNutritionForLabel(label, weight: frameWeight)
                     }
                 }
             }

@@ -8,27 +8,43 @@
 import Foundation
 
 class NutritionService {
-    let appId = "51ff2ea1"
-    let appKey = "9a22bafc11a8098a6d547f809b6bf3ec"
+    let appId = "a4eb991b"
+    let appKey = "abea559f58e2c8542b4d117e375317ac"
     
+    // Global tracker shared across the whole app
+    private static var lastGlobalCallTime: Date?
+    private static let minInterval: TimeInterval = 6.5 // Force ~9 calls per minute max
+
     func fetchNutrition(for query: String) async throws -> Ingredient? {
+        // --- GLOBAL SAFETY LIMITER ---
+        if let lastCall = NutritionService.lastGlobalCallTime,
+           Date().timeIntervalSince(lastCall) < NutritionService.minInterval {
+            print("SAFETY: Global rate limit protection triggered. Request for [\(query)] blocked.")
+            return nil
+        }
+        NutritionService.lastGlobalCallTime = Date()
+        // -----------------------------
+
+        print("API: Fetching for [\(query)]")
+        
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         let urlString = "https://api.edamam.com/api/nutrition-data?app_id=\(appId)&app_key=\(appKey)&ingr=\(encodedQuery)"
         
         guard let url = URL(string: urlString) else { return nil }
         
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await URLSession.shared.data(from: url)
         
-        let response = try JSONDecoder().decode(EdamamResponse.self, from: data)
+        if let httpResponse = response as? HTTPURLResponse {
+            if httpResponse.statusCode == 429 {
+                print("API: Rate Limit Exceeded (429).")
+                return nil
+            }
+            print("HTTP Status: \(httpResponse.statusCode)")
+        }
+
+        let decoded = try JSONDecoder().decode(EdamamResponse.self, from: data)
+        let nutrients = decoded.firstParsedNutrients
         
-        // Extract nutrients from the nested path
-        let nutrients = response.firstParsedNutrients
-        
-        // Edamam uses these specific codes:
-        // Calories: ENERC_KCAL
-        // Protein: PROCNT
-        // Carbs: CHOCDF
-        // Fats: FAT
         return Ingredient(
             name: query,
             amount: 1,

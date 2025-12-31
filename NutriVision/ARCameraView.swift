@@ -50,6 +50,8 @@ struct ARCameraView: UIViewRepresentable {
         private var chartNode: SCNNode?
         private var hasPlacedChart = false
         
+        private var lastFetchTimes: [String: Date] = [:]
+        
         private let nutritionService = NutritionService()
         private var pendingLabels = Set<String>()
         
@@ -152,12 +154,21 @@ struct ARCameraView: UIViewRepresentable {
         }
         
         private func fetchNutritionForLabel(_ label: String, weight: Double) {
+            // 1. Check if already loading this specific label
             guard !pendingLabels.contains(label) else { return }
+            
+            // 2. Cooldown check: Don't fetch the same ingredient more than once every 15 seconds
+            if let lastFetch = lastFetchTimes[label], Date().timeIntervalSince(lastFetch) < 15 {
+                print("Cooldown: Skipping API call for \(label)")
+                return
+            }
+            
             pendingLabels.insert(label)
+            lastFetchTimes[label] = Date() // Record the attempt time immediately
             
-            // Build the query (e.g., "350g pizza")
             let query = "\(Int(weight))g \(label)"
-            
+            print("Requesting API for: \(query)")
+
             Task {
                 do {
                     if let ingredient = try await nutritionService.fetchNutrition(for: query) {
@@ -166,13 +177,22 @@ struct ARCameraView: UIViewRepresentable {
                                 var updated = ingredient
                                 updated.areaScore = CGFloat(weight)
                                 self.parent.detectedIngredients[index] = updated
+                                print("API Success for \(label)")
                             }
                             self.pendingLabels.remove(label)
                         }
+                    } else {
+                        // If it returned nil (likely due to the safety limiter), allow retry sooner
+                        await MainActor.run {
+                            self.pendingLabels.remove(label)
+                            self.lastFetchTimes.removeValue(forKey: label)
+                        }
                     }
                 } catch {
-                    print("Nutrition API Error: \(error)")
-                    await MainActor.run { self.pendingLabels.remove(label) }
+                    print("Nutrition API Error: \(error.localizedDescription)")
+                    await MainActor.run {
+                        self.pendingLabels.remove(label)
+                    }
                 }
             }
         }

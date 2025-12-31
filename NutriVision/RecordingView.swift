@@ -169,7 +169,6 @@ struct RecordingView: View {
         }
     }
 
-    //PARA SIMULAR A CHAMADA À API
     func simulateDetection(name: String, grams: Int) {
         let placeholder = Ingredient(aiDetectedName: name)
         detectedIngredients.append(placeholder)

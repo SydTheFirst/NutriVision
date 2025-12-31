@@ -92,6 +92,8 @@ struct ARCameraView: UIViewRepresentable {
 
             for observation in observations {
                 guard let label = observation.labels.first?.identifier else { continue }
+                
+                print("Detected: \(label) | Confidence: \(observation.confidence)")
                 guard observation.confidence > 0.5 else { continue }
                 
                 // Use the raycast-based weight estimation
@@ -186,25 +188,62 @@ struct ARCameraView: UIViewRepresentable {
             chartNode?.removeFromParentNode()
             let root = SCNNode()
             
-            let values = [
-                (calories, UIColor.orange),
-                (protein, UIColor.green),
-                (carbs, UIColor.purple),
-                (fats, UIColor.red)
+            let values: [(Double, UIColor, String, String)] = [
+                (calories, .orange, "Calories", "flame.fill"),
+                (protein, .green, "Protein", "leaf.fill"),
+                (carbs, .purple, "Carbs", "bolt.fill"),
+                (fats, .red, "Fats", "drop.fill")
             ]
+            
+            let barSpacing: Float = 0.06
+            let startX: Float = -0.09
             
             for (index, item) in values.enumerated() {
                 let height = max(0.02, Float(item.0) * 0.0005)
+                
+                // --- Bar ---
                 let bar = SCNBox(width: 0.04, height: CGFloat(height), length: 0.04, chamferRadius: 0.005)
                 bar.firstMaterial?.diffuse.contents = item.1
-                let node = SCNNode(geometry: bar)
-                node.position = SCNVector3(Float(index) * 0.06 - 0.09, height / 2, 0)
-                root.addChildNode(node)
+                let barNode = SCNNode(geometry: bar)
+                let xPos = Float(index) * barSpacing + startX
+                barNode.position = SCNVector3(xPos, height / 2, 0)
+                root.addChildNode(barNode)
+                
+                // --- Icon inside bar ---
+                if let iconImage = UIImage(systemName: item.3) {
+                    let plane = SCNPlane(width: 0.012, height: 0.012)
+                    plane.firstMaterial?.diffuse.contents = iconImage
+                    plane.firstMaterial?.isDoubleSided = true
+                    
+                    let iconNode = SCNNode(geometry: plane)
+                    // Position slightly below top of bar
+                    iconNode.position = SCNVector3(xPos, height - 0.01, 0.025)
+                    
+                    // Optional additional scale for finer adjustment
+                    iconNode.scale = SCNVector3(0.8, 0.8, 0.8)
+                    
+                    // Make icon face the camera
+                    let constraint = SCNBillboardConstraint()
+                    constraint.freeAxes = .Y
+                    iconNode.constraints = [constraint]
+                    
+                    root.addChildNode(iconNode)
+                }
+                
+                // --- Label under chart ---
+                let text = SCNText(string: item.2, extrusionDepth: 0.001)
+                text.font = UIFont.systemFont(ofSize: 3)
+                text.flatness = 0.2
+                text.firstMaterial?.diffuse.contents = UIColor.white
+                let textNode = SCNNode(geometry: text)
+                textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+                textNode.position = SCNVector3(xPos - 0.02, height + 0.01, 0)
+                root.addChildNode(textNode)
             }
             
+            // --- Position chart relative to camera ---
             if let camera = sceneView.pointOfView {
                 let transform = camera.transform
-                // Position the chart 15cm below and 40cm in front of the camera
                 let position = SCNVector3(transform.m41, transform.m42 - 0.15, transform.m43 - 0.4)
                 root.position = position
             }

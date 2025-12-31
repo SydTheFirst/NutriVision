@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
+import FirebaseFirestore
 
 struct RecordingView: View {
     @Environment(\.dismiss) var dismiss
@@ -16,6 +18,9 @@ struct RecordingView: View {
     @State private var showNamingAlert = false
     @State private var showAddTodayAlert = false
     @State private var mealName: String = ""
+    
+    // Service for manual simulation and API testing
+    private let nutritionService = NutritionService()
 
     // Computed totals
     var totalCalories: Double { detectedIngredients.reduce(0) { $0 + $1.calories } }
@@ -28,7 +33,6 @@ struct RecordingView: View {
     }
 
     var body: some View {
-        
         VStack(spacing: 0) {
             // 1. Camera Feed (30% Height)
             ZStack(alignment: .bottomTrailing) {
@@ -52,7 +56,7 @@ struct RecordingView: View {
             
             // 2. Nutrition Details Area
             VStack(spacing: 0) {
-                // FIXED Horizontal Scroll
+                // Horizontal Summary Pills
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 9) {
                         SummaryPill(title: "Calories", value: String(format: "%.0fkcal", totalCalories), icon: "flame.fill", color: .orange)
@@ -66,9 +70,23 @@ struct RecordingView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("Detected Ingredients")
-                            .font(.title3.bold())
-                            .padding(.horizontal)
+                        HStack {
+                            Text("Detected Ingredients")
+                                .font(.title3.bold())
+                            
+                            Spacer()
+                            
+                            // Só para simular chamada à API
+                            #if targetEnvironment(simulator)
+                            HStack(spacing: 8) {
+                                Button("🧪 Pizza") { simulateDetection(name: "pizza", grams: 250) }
+                                Button("🧪 Apple") { simulateDetection(name: "apple", grams: 150) }
+                            }
+                            .font(.caption2)
+                            .buttonStyle(.bordered)
+                            #endif
+                        }
+                        .padding(.horizontal)
 
                         if detectedIngredients.isEmpty {
                             VStack(spacing: 10) {
@@ -84,13 +102,14 @@ struct RecordingView: View {
                                     DetectedIngredientRow(
                                         ingredient: ingredient,
                                         onDelete: {
-                                            if let index = detectedIngredients.firstIndex(of: ingredient) {
+                                            if let index = detectedIngredients.firstIndex(where: { $0.id == ingredient.id }) {
                                                 detectedIngredients.remove(at: index)
                                             }
                                         }
                                     )
                                 }
                             }
+                            .padding(.horizontal)
                         }
                     }
                     .padding(.vertical)
@@ -101,6 +120,7 @@ struct RecordingView: View {
             .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
             .offset(y: -20)
 
+            // 3. Action Buttons
             HStack(spacing: 12) {
                 Button(action: { showNamingAlert = true }) {
                     Text("Save Meal")
@@ -112,28 +132,27 @@ struct RecordingView: View {
                         .cornerRadius(15)
                 }
                 .disabled(detectedIngredients.isEmpty)
+                
                 Button(action: { showAddTodayAlert = true }) {
-                    HStack{
+                    HStack {
                         Image(systemName: "plus.circle.fill")
                         Text("Add to Today")
                     }
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(detectedIngredients.isEmpty ? Color.gray.opacity(0.5) : Color.blue)
+                    .background(detectedIngredients.isEmpty ? Color.gray.opacity(0.5) : Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(15)
-                            
                 }
                 .disabled(detectedIngredients.isEmpty)
             }
             .padding(.horizontal)
-            .padding(.bottom, 12)
+            .padding(.bottom, 20)
             .background(Color(.systemBackground))
         }
         .navigationTitle("Live Scan")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(false)
         .alert("Name your meal", isPresented: $showNamingAlert) {
             TextField("e.g., Morning Shake", text: $mealName)
             Button("Save", action: saveMeal)
@@ -147,6 +166,28 @@ struct RecordingView: View {
             Button("Cancel", role: .cancel) { mealName = "" }
         } message: {
             Text("Add this meal to today's nutrition log")
+        }
+    }
+
+    //PARA SIMULAR A CHAMADA À API
+    func simulateDetection(name: String, grams: Int) {
+        let placeholder = Ingredient(aiDetectedName: name)
+        detectedIngredients.append(placeholder)
+        
+        Task {
+            do {
+                if let fetched = try await nutritionService.fetchNutrition(for: "\(grams)g \(name)") {
+                    await MainActor.run {
+                        if let index = detectedIngredients.firstIndex(where: { $0.name == name }) {
+                            var updated = fetched
+                            updated.areaScore = CGFloat(grams) / 2.5
+                            detectedIngredients[index] = updated
+                        }
+                    }
+                }
+            } catch {
+                print("Simulation Error: \(error)")
+            }
         }
     }
 
@@ -165,11 +206,7 @@ struct RecordingView: View {
         
         do {
             try db.collection("Users").document(uid).collection("Meals").addDocument(from: newMeal)
-            mealName = ""
-            
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
-            
+            triggerSuccessFeedback()
             dismiss()
         } catch {
             print("Error: \(error.localizedDescription)")
@@ -185,20 +222,21 @@ struct RecordingView: View {
             userID: uid,
             name: finalName,
             date: Date(),
-            isSaved: true,
+            isSaved: false,
             ingredients: detectedIngredients
         )
         
         do {
             try db.collection("Users").document(uid).collection("Meals").addDocument(from: todayMeal)
-            mealName = ""
-            
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
-            
+            triggerSuccessFeedback()
             dismiss()
         } catch {
-            print("Error adding meal to today: \(error.localizedDescription)")
+            print("Error adding meal: \(error.localizedDescription)")
         }
+    }
+    
+    private func triggerSuccessFeedback() {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
     }
 }

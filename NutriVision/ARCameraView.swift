@@ -20,6 +20,8 @@ struct ARCameraView: UIViewRepresentable {
         
         let configuration = ARWorldTrackingConfiguration()
         configuration.environmentTexturing = .automatic
+        // Enable plane detection to improve distance accuracy for raycasting
+        configuration.planeDetection = [.horizontal]
         view.session.run(configuration)
         
         context.coordinator.sceneView = view
@@ -48,6 +50,9 @@ struct ARCameraView: UIViewRepresentable {
         private var chartNode: SCNNode?
         private var hasPlacedChart = false
         
+        private let nutritionService = NutritionService()
+        private var pendingLabels = Set<String>()
+
         init(_ parent: ARCameraView) {
             self.parent = parent
             super.init()
@@ -61,10 +66,7 @@ struct ARCameraView: UIViewRepresentable {
                 return
             }
 
-            let request = VNCoreMLRequest(model: visionModel) { request, _ in
-                // Results are handled in session(_:didUpdate:)
-            }
-
+            let request = VNCoreMLRequest(model: visionModel) { _, _ in }
             request.imageCropAndScaleOption = .scaleFill
             self.requests = [request]
         }
@@ -81,97 +83,98 @@ struct ARCameraView: UIViewRepresentable {
             }
         }
 
-        private func handleDetections(
-            _ observations: [VNRecognizedObjectObservation],
-            frame: ARFrame
-        ) {
+        private func handleDetections(_ observations: [VNRecognizedObjectObservation], frame: ARFrame) {
+            // Group detections to avoid redundant API calls in a single frame
+            var weightsPerLabel: [String: Double] = [:]
+
+            for observation in observations {
+                guard let label = observation.labels.first?.identifier else { continue }
+                
+                // Use the raycast-based weight estimation
+                let weight = estimateWeight(for: observation)
+                
+                // Track the largest/best detection for this label in the current frame
+                weightsPerLabel[label] = max(weightsPerLabel[label] ?? 0, weight)
+            }
+
             DispatchQueue.main.async {
-                let camera = frame.camera
-                let fx = CGFloat(camera.intrinsics[0][0])
-                let fy = CGFloat(camera.intrinsics[1][1])
-                let imageWidth = CGFloat(CVPixelBufferGetWidth(frame.capturedImage))
-                let imageHeight = CGFloat(CVPixelBufferGetHeight(frame.capturedImage))
-                let estimatedDistance: CGFloat = 0.4 // meters
-
-                // Step 1: Compute summed area per label in this frame
-                var areasPerLabel: [String: CGFloat] = [:]
-
-                for observation in observations {
-                    guard let label = observation.labels.first?.identifier else { continue }
-
-                    // Bounding box in pixels
-                    let bbox = observation.boundingBox
-                    let bboxWidthPixels = bbox.width * imageWidth
-                    let bboxHeightPixels = bbox.height * imageHeight
-
-                    // Convert to real-world dimensions in meters
-                    let widthMeters = bboxWidthPixels * estimatedDistance / fx
-                    let heightMeters = bboxHeightPixels * estimatedDistance / fy
-
-                    // Convert to cm²
-                    let areaCM2 = widthMeters * 100 * heightMeters * 100
-
-                    // Sum multiple instances of the same label in this frame
-                    areasPerLabel[label, default: 0] += areaCM2
-                }
-
-                // Step 2: Update detectedIngredients using max
-                for (label, frameArea) in areasPerLabel {
+                for (label, weight) in weightsPerLabel {
                     if let index = self.parent.detectedIngredients.firstIndex(where: { $0.name == label }) {
-                        // Take max to avoid jitter accumulation
-                        self.parent.detectedIngredients[index].areaScore =
-                            max(self.parent.detectedIngredients[index].areaScore, frameArea)
+                        // Update existing score with the new weight estimation
+                        self.parent.detectedIngredients[index].areaScore = CGFloat(weight)
                     } else {
-                        var ingredient = Ingredient(aiDetectedName: label)
-                        ingredient.areaScore = frameArea
-                        self.parent.detectedIngredients.append(ingredient)
+                        // New ingredient found
+                        let newIngredient = Ingredient(aiDetectedName: label)
+                        self.parent.detectedIngredients.append(newIngredient)
+                        
+                        // Fetch real data using the estimated weight
+                        self.fetchNutritionForLabel(label, weight: weight)
                     }
                 }
             }
         }
         
-        func areaFromBoundingBox(
-            _ bbox: CGRect,
-            frameSize: CGSize
-        ) -> CGFloat {
-            let width = bbox.width * frameSize.width
-            let height = bbox.height * frameSize.height
-            return width * height
+        private func estimateWeight(for observation: VNRecognizedObjectObservation) -> Double {
+            guard let sceneView = sceneView,
+                  let frame = sceneView.session.currentFrame else { return 150.0 }
+            
+            let centerPoint = CGPoint(x: observation.boundingBox.midX, y: 1 - observation.boundingBox.midY)
+            let results = sceneView.raycastQuery(from: centerPoint, allowing: .estimatedPlane, alignment: .any)
+            
+            if let query = results, let result = sceneView.session.raycast(query).first {
+                let distance = simd_distance(result.worldTransform.columns.3, frame.camera.transform.columns.3)
+                
+                // Calculate physical width in cm using pinhole model
+                let physicalWidth = Double(distance) * Double(observation.boundingBox.width) * 100
+                
+                // Volume Estimation (Cylinder model for plates/pizza/meals)
+                let radius = physicalWidth / 2
+                let area = Double.pi * pow(radius, 2)
+                let thickness = 2.0 // Assume 2cm average food height
+                let volume = area * thickness
+                
+                let weight = volume * 1.0 // Density 1.0g/cm3
+                return max(50, min(weight, 1500)) // Clamped between 50g and 1.5kg
+            }
+            
+            return 150.0
         }
         
-        // MARK: - Chart logic
-        func updateChartIfNeeded(
-            ingredients: [Ingredient],
-            calories: Double,
-            protein: Double,
-            carbs: Double,
-            fats: Double
-        ) {
-            guard !ingredients.isEmpty else { return }
+        private func fetchNutritionForLabel(_ label: String, weight: Double) {
+            guard !pendingLabels.contains(label) else { return }
+            pendingLabels.insert(label)
             
-            // Place chart only once
-            if !hasPlacedChart {
-                placeChart(
-                    calories: calories,
-                    protein: protein,
-                    carbs: carbs,
-                    fats: fats
-                )
-                hasPlacedChart = true
+            // Build the query (e.g., "350g pizza")
+            let query = "\(Int(weight))g \(label)"
+            
+            Task {
+                do {
+                    if let ingredient = try await nutritionService.fetchNutrition(for: query) {
+                        await MainActor.run {
+                            if let index = self.parent.detectedIngredients.firstIndex(where: { $0.name == label }) {
+                                var updated = ingredient
+                                updated.areaScore = CGFloat(weight)
+                                self.parent.detectedIngredients[index] = updated
+                            }
+                            self.pendingLabels.remove(label)
+                        }
+                    }
+                } catch {
+                    print("Nutrition API Error: \(error)")
+                    await MainActor.run { self.pendingLabels.remove(label) }
+                }
             }
         }
-        
-        private func placeChart(
-            calories: Double,
-            protein: Double,
-            carbs: Double,
-            fats: Double
-        ) {
+
+        func updateChartIfNeeded(ingredients: [Ingredient], calories: Double, protein: Double, carbs: Double, fats: Double) {
+            guard !ingredients.isEmpty else { return }
+            placeChart(calories: calories, protein: protein, carbs: carbs, fats: fats)
+            hasPlacedChart = true
+        }
+
+        private func placeChart(calories: Double, protein: Double, carbs: Double, fats: Double) {
             guard let sceneView else { return }
-            
-            // Remove old chart
             chartNode?.removeFromParentNode()
-            
             let root = SCNNode()
             
             let values = [
@@ -182,35 +185,18 @@ struct ARCameraView: UIViewRepresentable {
             ]
             
             for (index, item) in values.enumerated() {
-                let height = max(0.05, Float(item.0) * 0.002)
-                
-                let bar = SCNBox(
-                    width: 0.04,
-                    height: CGFloat(height),
-                    length: 0.04,
-                    chamferRadius: 0.005
-                )
-                
+                let height = max(0.02, Float(item.0) * 0.0005)
+                let bar = SCNBox(width: 0.04, height: CGFloat(height), length: 0.04, chamferRadius: 0.005)
                 bar.firstMaterial?.diffuse.contents = item.1
-                
                 let node = SCNNode(geometry: bar)
-                node.position = SCNVector3(
-                    Float(index) * 0.06 - 0.09,
-                    height / 2,
-                    0
-                )
-                
+                node.position = SCNVector3(Float(index) * 0.06 - 0.09, height / 2, 0)
                 root.addChildNode(node)
             }
             
-            // Position chart in front of camera
             if let camera = sceneView.pointOfView {
                 let transform = camera.transform
-                let position = SCNVector3(
-                    transform.m41,
-                    transform.m42 - 0.15,
-                    transform.m43 - 0.4
-                )
+                // Position the chart 15cm below and 40cm in front of the camera
+                let position = SCNVector3(transform.m41, transform.m42 - 0.15, transform.m43 - 0.4)
                 root.position = position
             }
             

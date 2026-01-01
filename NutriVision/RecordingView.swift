@@ -18,7 +18,8 @@ struct RecordingView: View {
     @State private var showNamingAlert = false
     @State private var showAddTodayAlert = false
     @State private var mealName: String = ""
-    
+    @State private var isScanning = true
+
     // Service for manual simulation and API testing
     private let nutritionService = NutritionService()
 
@@ -41,11 +42,18 @@ struct RecordingView: View {
                     calories: totalCalories,
                     protein: totalProtein,
                     carbs: totalCarbs,
-                    fats: totalFats
+                    fats: totalFats,
+                    isScanning: $isScanning
                 )
                 .ignoresSafeArea()
-                
-                Text("AI ACTIVE")
+
+                if !isScanning {
+                    Color.black.opacity(0.25)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                }
+
+                Text(isScanning ? "AI ACTIVE" : "PAUSED")
                     .font(.caption2.bold())
                     .padding(6)
                     .background(.ultraThinMaterial)
@@ -53,7 +61,7 @@ struct RecordingView: View {
                     .padding()
             }
             .frame(height: UIScreen.main.bounds.height * 0.30)
-            
+
             // 2. Nutrition Details Area
             VStack(spacing: 0) {
                 // Horizontal Summary Pills
@@ -122,7 +130,10 @@ struct RecordingView: View {
 
             // 3. Action Buttons
             HStack(spacing: 12) {
-                Button(action: { showNamingAlert = true }) {
+                Button(action: {
+                    isScanning = false
+                    showNamingAlert = true
+                }) {
                     Text("Save Meal")
                         .bold()
                         .frame(maxWidth: .infinity)
@@ -133,7 +144,10 @@ struct RecordingView: View {
                 }
                 .disabled(detectedIngredients.isEmpty)
                 
-                Button(action: { showAddTodayAlert = true }) {
+                Button(action: {
+                    isScanning = false
+                    showAddTodayAlert = true
+                }) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                         Text("Add to Today")
@@ -156,7 +170,10 @@ struct RecordingView: View {
         .alert("Name your meal", isPresented: $showNamingAlert) {
             TextField("e.g., Morning Shake", text: $mealName)
             Button("Save", action: saveMeal)
-            Button("Cancel", role: .cancel) { mealName = "" }
+            Button("Cancel", role: .cancel) {
+                mealName = ""
+                isScanning = true
+            }
         } message: {
             Text("Save this meal to your favorites")
         }

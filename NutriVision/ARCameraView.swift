@@ -11,6 +11,8 @@ struct ARCameraView: UIViewRepresentable {
     var protein: Double
     var carbs: Double
     var fats: Double
+    
+    @Binding var isScanning: Bool
 
     func makeUIView(context: Context) -> ARSCNView {
         let view = ARSCNView()
@@ -29,13 +31,22 @@ struct ARCameraView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: ARSCNView, context: Context) {
-        context.coordinator.updateChartIfNeeded(
-            ingredients: detectedIngredients,
-            calories: calories,
-            protein: protein,
-            carbs: carbs,
-            fats: fats
-        )
+        if isScanning {
+            if uiView.session.currentFrame == nil {
+                let configuration = ARWorldTrackingConfiguration()
+                configuration.environmentTexturing = .automatic
+                configuration.planeDetection = [.horizontal]
+                uiView.session.run(configuration, options: [])
+            }
+
+            context.coordinator.updateChartIfNeeded(
+                ingredients: detectedIngredients,
+                calories: calories,
+                protein: protein,
+                carbs: carbs,
+                fats: fats
+            )
+        }
     }
     
     func makeCoordinator() -> Coordinator {
@@ -76,6 +87,8 @@ struct ARCameraView: UIViewRepresentable {
         }
         
         func session(_ session: ARSession, didUpdate frame: ARFrame) {
+            guard parent.isScanning else { return }
+
             let handler = VNImageRequestHandler(
                 cvPixelBuffer: frame.capturedImage,
                 orientation: .right

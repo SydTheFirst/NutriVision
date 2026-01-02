@@ -2,14 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Used to improv AR session performance</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app uses the camera to detect food and display nutritional information.
-This app uses the camera to detect food and display nutritional information.
-This app uses the camera to detect food and display nutritional information.
-This app uses the camera to detect food and display nutritional information.
-This app uses the camera to detect food and display nutritional information</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1024026334214-pc5f0iar9kh0r08c26uh7hds9iar1n2c</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

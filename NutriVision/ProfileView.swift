@@ -20,7 +20,7 @@ struct ProfileView: View {
     @State private var showDeleteAlert = false
     @State private var showLogoutAlert = false
     @State private var isDeleting = false
-    
+
     // Editable fields
     @State private var editName = ""
     @State private var editAge = ""
@@ -28,8 +28,7 @@ struct ProfileView: View {
     @State private var editWeight = ""
     @State private var editGender: Gender = .other
     @State private var editWeightGoal: WeightGoal = .maintain
-    @State private var editDailyCaloriesString: String = ""
-
+    @State private var calculatedDailyCalories: Double = 2000
     
     var body: some View {
         NavigationStack {
@@ -82,12 +81,22 @@ struct ProfileView: View {
                                 }
                                 .pickerStyle(SegmentedPickerStyle())
                                 
-                                ProfileEditField(
-                                    title: "Daily Calorie Goal",
-                                    text: $editDailyCaloriesString,
-                                    icon: "flame.fill",
-                                    keyboardType: .decimalPad
+                                HStack(spacing: 15) {
+                                    Image(systemName: "flame.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.orange)
+                                        .frame(width: 30)
+
+                                    Text("\(Int(calculatedDailyCalories)) kcal")
+                                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                                        .foregroundColor(.gray)
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(colorScheme == .light ? Color.white : Color(uiColor: .systemGray6))
                                 )
+                                .padding(.horizontal)
                             }
                             
                             // Save Changes Button
@@ -117,6 +126,24 @@ struct ProfileView: View {
                                 ProfileInfoRow(icon: "calendar", label: "Age", value: "\(user?.age ?? 0)")
                                 ProfileInfoRow(icon: "ruler", label: "Height", value: "\(user?.height ?? 0) cm")
                                 ProfileInfoRow(icon: "scalemass", label: "Weight", value: String(format: "%.1f kg", user?.weight ?? 0.0))
+
+                                ProfileInfoRow(
+                                    icon: "person.2.fill",
+                                    label: "Gender",
+                                    value: user?.gender?.rawValue.capitalized ?? "N/A"
+                                )
+
+                                ProfileInfoRow(
+                                    icon: "target",
+                                    label: "Goal",
+                                    value: ((user?.weightGoal?.rawValue.capitalized).map { "\($0) weight" }) ?? "N/A"
+                                )
+
+                                ProfileInfoRow(
+                                    icon: "flame.fill",
+                                    label: "Daily Calories",
+                                    value: "\(Int(user?.dailyCalories ?? 2000)) kcal"
+                                )
                             }
                             
                             // Edit Profile Button
@@ -232,7 +259,7 @@ struct ProfileView: View {
         
         editGender = user?.gender ?? .other
         editWeightGoal = user?.weightGoal ?? .maintain
-        editDailyCaloriesString = user?.dailyCalories != nil ? String(format: "%.0f", user!.dailyCalories!) : "2000"
+        calculatedDailyCalories = user?.dailyCalories != nil ? user!.dailyCalories! : 2000
         
         isEditing = true
     }
@@ -246,7 +273,7 @@ struct ProfileView: View {
         
         let db = Firestore.firestore()
         
-        let dailyCalories = Double(editDailyCaloriesString) ?? 2000.0
+        let dailyCalories = calculateDailyCalories()
         
         let updates: [String: Any] = [
             "name": editName,
@@ -345,6 +372,34 @@ struct ProfileView: View {
                     dismiss()
                 }
             }
+        }
+    }
+    
+    func calculateDailyCalories() -> Double {
+        guard let w = Double(editWeight),
+              let h = Double(editHeight),
+              let a = Double(editAge) else {
+            return 2000
+        }
+
+        var bmr: Double = 0
+
+        switch editGender {
+        case .male:
+            bmr = 10 * w + 6.25 * h - 5 * a + 5
+        case .female:
+            bmr = 10 * w + 6.25 * h - 5 * a - 161
+        case .other:
+            bmr = 10 * w + 6.25 * h - 5 * a
+        }
+
+        switch editWeightGoal {
+        case .lose:
+            return bmr - 500
+        case .gain:
+            return bmr + 500
+        case .maintain:
+            return bmr
         }
     }
 }

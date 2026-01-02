@@ -15,7 +15,7 @@ struct HomeView: View {
     @State private var currentUser: User?
     @State private var isLoading = true
     @EnvironmentObject var appState: AppState
-    
+    @StateObject private var dataManager = DataManager()
     @State private var mealHistory: [Meal] = []
 
     var body: some View {
@@ -94,7 +94,7 @@ struct HomeView: View {
                                         )
                                     }
                                     
-                                    NavigationLink(destination: AISuggestionView(history: mealHistory)) {
+                                    NavigationLink(destination: AISuggestionView(history: mealHistory, dataManager: dataManager)) {
                                         HomeActionButton(
                                             icon: "sparkles",
                                             title: "AI Suggestions",

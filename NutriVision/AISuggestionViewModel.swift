@@ -16,6 +16,11 @@ class AISuggestionViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var isRecentlySaved = false
+    @Published var dataManager: DataManager
+
+    init(dataManager: DataManager) {
+       self.dataManager = dataManager
+   }
     
     private let db = Firestore.firestore()
     
@@ -26,16 +31,55 @@ class AISuggestionViewModel: ObservableObject {
         )
     )
     
-    func generateMealSuggestion(history: [Meal]) async {
+    func generateMealSuggestion(
+        history: [Meal]
+    ) async {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        
+        guard let user = dataManager.currentUser else { return }
+
         isLoading = true
         errorMessage = nil
         isRecentlySaved = false
-            
+
         let historyNames = history.suffix(10).map { $0.name }.joined(separator: ", ")
+
+        // Current hour
+        let hour = Calendar.current.component(.hour, from: Date())
+
+        // Meals left in the day
+        let mealsLeft: Int
+        let mealLabel: String
+        switch hour {
+        case 5..<12:
+            mealsLeft = 4      // breakfast, lunch, dinner
+            mealLabel = "breakfast"
+        case 12..<18:
+            mealsLeft = 2      // lunch, dinner
+            mealLabel = "lunch"
+        case 18..<21:
+            mealsLeft = 2      // dinner
+            mealLabel = "dinner"
+        default:
+            mealsLeft = 1      // snack
+            mealLabel = "snack"
+        }
+
+        let dailyCalorieGoal = user.dailyCalories ?? 2000
+        let todayCalories = dataManager.todayCalories
+        let weightGoal = user.weightGoal ?? .maintain
+        
+        // Suggested kcal for this meal
+        let kcalForThisMeal = max(Int((dailyCalorieGoal - todayCalories) / Double(mealsLeft)), 50)
+        // minimum 50 kcal so AI doesn’t suggest zero
+
+        // 4️⃣ Prompt for AI
         let prompt = """
-        Suggest ONE healthy meal based on this history: \(historyNames).
+        Suggest ONE healthy \(mealLabel) for a user who wants to \(weightGoal.rawValue) weight.
+        He has a daily calorie intake goal of \(Int(dailyCalorieGoal)) kcal, and has already consumed \(Int(todayCalories)) kcal today.
+        There are approximately \(mealsLeft) meals left today. 
+        This meal should roughly contain \(kcalForThisMeal) kcal, appropriate for the remaining meals and the user's goal.
+        Consider this recent meal history: \(historyNames).
+
         Return ONLY a JSON object with this exact structure:
         {
           "name": "Meal Name",
@@ -51,23 +95,23 @@ class AISuggestionViewModel: ObservableObject {
 
         do {
             let response = try await model.generateContent(prompt)
-            
+
             guard let jsonString = response.text, let data = jsonString.data(using: .utf8) else {
                 self.errorMessage = "AI returned an empty response."
                 self.isLoading = false
                 return
             }
-            
-            // 1. Decode the meal
+
+            // Decode the meal
             var decodedMeal = try JSONDecoder().decode(Meal.self, from: data)
-            
-            // 2. CRITICAL FIX: Assign a unique ID to prevent "ID nil" errors in Lists
+
+            // Assign unique ID and metadata
             decodedMeal.userID = uid
             decodedMeal.date = Date()
             decodedMeal.isSaved = false
-            
+
             self.suggestedMeal = decodedMeal
-            
+
         } catch {
             self.errorMessage = "AI Error: \(error.localizedDescription)"
         }
@@ -121,8 +165,13 @@ class AISuggestionViewModel: ObservableObject {
 }
 
 struct AISuggestionView: View {
-    @StateObject private var vm = AISuggestionViewModel()
+    @StateObject private var vm: AISuggestionViewModel
     let history: [Meal]
+    
+    init(history: [Meal], dataManager: DataManager) {
+        self.history = history
+        _vm = StateObject(wrappedValue: AISuggestionViewModel(dataManager: dataManager))
+    }
 
     var body: some View {
         NavigationView {

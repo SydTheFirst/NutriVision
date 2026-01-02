@@ -26,6 +26,10 @@ struct ProfileView: View {
     @State private var editAge = ""
     @State private var editHeight = ""
     @State private var editWeight = ""
+    @State private var editGender: Gender = .other
+    @State private var editWeightGoal: WeightGoal = .maintain
+    @State private var editDailyCaloriesString: String = ""
+
     
     var body: some View {
         NavigationStack {
@@ -63,6 +67,27 @@ struct ProfileView: View {
                                 ProfileEditField(title: "Age", text: $editAge, icon: "calendar", keyboardType: .numberPad)
                                 ProfileEditField(title: "Height (cm)", text: $editHeight, icon: "ruler", keyboardType: .numberPad)
                                 ProfileEditField(title: "Weight (kg)", text: $editWeight, icon: "scalemass", keyboardType: .decimalPad)
+                                
+                                Picker("Gender", selection: $editGender) {
+                                    ForEach(Gender.allCases, id: \.self) { gender in
+                                        Text(gender.rawValue.capitalized).tag(gender)
+                                    }
+                                }
+                                .pickerStyle(SegmentedPickerStyle())
+                                
+                                Picker("Weight Goal", selection: $editWeightGoal) {
+                                    ForEach(WeightGoal.allCases, id: \.self) { goal in
+                                        Text(goal.rawValue.capitalized).tag(goal)
+                                    }
+                                }
+                                .pickerStyle(SegmentedPickerStyle())
+                                
+                                ProfileEditField(
+                                    title: "Daily Calorie Goal",
+                                    text: $editDailyCaloriesString,
+                                    icon: "flame.fill",
+                                    keyboardType: .decimalPad
+                                )
                             }
                             
                             // Save Changes Button
@@ -204,6 +229,11 @@ struct ProfileView: View {
         editAge = "\(user?.age ?? 0)"
         editHeight = "\(user?.height ?? 0)"
         editWeight = String(format: "%.1f", user?.weight ?? 0.0)
+        
+        editGender = user?.gender ?? .other
+        editWeightGoal = user?.weightGoal ?? .maintain
+        editDailyCaloriesString = user?.dailyCalories != nil ? String(format: "%.0f", user!.dailyCalories!) : "2000"
+        
         isEditing = true
     }
     
@@ -215,27 +245,41 @@ struct ProfileView: View {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         let db = Firestore.firestore()
-        db.collection("Users").document(uid).updateData([
+        
+        let dailyCalories = Double(editDailyCaloriesString) ?? 2000.0
+        
+        let updates: [String: Any] = [
             "name": editName,
             "age": Int(editAge) ?? 0,
             "height": Int(editHeight) ?? 0,
-            "weight": Double(editWeight) ?? 0.0
-        ]) { error in
-            if error == nil {
-                // Update local user object
-                user = User(
-                    id: user?.id,
-                    name: editName,
-                    email: user?.email ?? "",
-                    age: Int(editAge),
-                    height: Int(editHeight),
-                    weight: Double(editWeight)
-                )
-                isEditing = false
+            "weight": Double(editWeight) ?? 0.0,
+            "gender": editGender.rawValue,
+            "goal": editWeightGoal.rawValue,
+            "dailyCalorieGoal": dailyCalories
+        ]
+        
+        db.collection("Users").document(uid).updateData(updates) { error in
+            if let error = error {
+                print("Error updating user: \(error.localizedDescription)")
+                return
             }
+            
+            user = User(
+                id: user?.id,
+                name: editName,
+                email: user?.email ?? "",
+                age: Int(editAge),
+                height: Int(editHeight),
+                weight: Double(editWeight),
+                gender: editGender,
+                weightGoal: editWeightGoal,
+                dailyCalories: dailyCalories
+            )
+            
+            isEditing = false
         }
     }
-    
+
     func fetchUserData() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         let db = Firestore.firestore()
@@ -247,17 +291,24 @@ struct ProfileView: View {
                 return
             }
             
+            let gender = (data["gender"] as? String).flatMap { Gender(rawValue: $0) }
+            let weightGoal = (data["goal"] as? String).flatMap { WeightGoal(rawValue: $0) }
+            let dailyCalories = data["dailyCalorieGoal"] as? Double
+
             self.user = User(
                 id: uid,
                 name: data["name"] as? String ?? "N/A",
                 email: data["email"] as? String ?? "",
                 age: data["age"] as? Int,
                 height: data["height"] as? Int,
-                weight: (data["weight"] as? NSNumber)?.doubleValue ?? 0.0
+                weight: (data["weight"] as? NSNumber)?.doubleValue,
+                gender: gender,
+                weightGoal: weightGoal,
+                dailyCalories: dailyCalories
             )
         }
     }
-    
+
     func logout() {
         do {
             try Auth.auth().signOut()

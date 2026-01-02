@@ -22,7 +22,10 @@ struct ProfileSetupView: View {
     @State private var age = ""
     @State private var height = ""
     @State private var weight = ""
-    
+    @State private var gender: Gender = .male
+    @State private var weightGoal: WeightGoal = .maintain
+    @State private var dailyCalories: Double = 0
+
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isSaving = false
@@ -87,6 +90,36 @@ struct ProfileSetupView: View {
                     .keyboardType(.decimalPad)
                     .focused($isWeightFocused)
                     .textFieldStyle(ProfileTextFieldStyle(isFocused: $isWeightFocused))
+                    
+                    Text("Gender")
+                        .font(.headline)
+                    HStack {
+                        ForEach(Gender.allCases, id: \.self) { g in
+                            Button(action: { gender = g }) {
+                                Text(g.rawValue.capitalized)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(gender == g ? Color.blue : Color.gray.opacity(0.2))
+                                    .foregroundColor(gender == g ? .white : .black)
+                                    .cornerRadius(10)
+                            }
+                        }
+                    }
+                    
+                    Text("Weight Goal")
+                        .font(.headline)
+                    HStack {
+                        ForEach(WeightGoal.allCases, id: \.self) { goal in
+                            Button(action: { weightGoal = goal }) {
+                                Text(goal.rawValue.capitalized)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(weightGoal == goal ? Color.green : Color.gray.opacity(0.2))
+                                    .foregroundColor(weightGoal == goal ? .white : .black)
+                                    .cornerRadius(10)
+                            }
+                        }
+                    }
                 }
                 
                 // Save Button
@@ -186,6 +219,8 @@ struct ProfileSetupView: View {
         
         isSaving = true
         
+        dailyCalories = calculateDailyCalories()
+
         let db = Firestore.firestore()
         
         db.collection("Users").document(uid).setData([
@@ -194,6 +229,9 @@ struct ProfileSetupView: View {
             "age": Int(age) ?? 0,
             "height": Int(height) ?? 0,
             "weight": Double(weight) ?? 0.0,
+            "gender": gender.rawValue,
+            "weightGoal": weightGoal.rawValue,
+            "dailyCalories": dailyCalories,
             "profileCompleted": true,
             "createdAt": FieldValue.serverTimestamp()
         ]) { error in
@@ -207,6 +245,33 @@ struct ProfileSetupView: View {
             }
         }
     }
+    
+    func calculateDailyCalories() -> Double {
+        guard let w = Double(weight),
+              let h = Double(height),
+              let a = Double(age) else { return 2000 }
+
+        var bmr: Double = 0
+
+        switch gender {
+        case .male:
+            bmr = 10*w + 6.25*h - 5*a + 5
+        case .female:
+            bmr = 10*w + 6.25*h - 5*a - 161
+        case .other:
+            bmr = 10*w + 6.25*h - 5*a   // Neutral
+        }
+
+        switch weightGoal {
+        case .lose:
+            return bmr - 500
+        case .gain:
+            return bmr + 500
+        case .maintain:
+            return bmr
+        }
+    }
+
 }
 
 struct ProfileTextFieldStyle: TextFieldStyle {

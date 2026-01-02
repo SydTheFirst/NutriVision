@@ -39,13 +39,13 @@ struct ARCameraView: UIViewRepresentable {
                 uiView.session.run(configuration, options: [])
             }
 
-            context.coordinator.updateChartIfNeeded(
-                ingredients: detectedIngredients,
-                calories: calories,
-                protein: protein,
-                carbs: carbs,
-                fats: fats
-            )
+//            context.coordinator.updateChartIfNeeded(
+//                ingredients: detectedIngredients,
+//                calories: calories,
+//                protein: protein,
+//                carbs: carbs,
+//                fats: fats
+//            )
         }
     }
     

@@ -156,7 +156,10 @@ struct HomeView: View {
                     email: data["email"] as? String ?? "",
                     age: data["age"] as? Int,
                     height: data["height"] as? Int,
-                    weight: data["weight"] as? Double
+                    weight: data["weight"] as? Double,
+                    gender: data["gender"] as? Gender,
+                    weightGoal: data["weightGoal"] as? WeightGoal,
+                    dailyCalories: data["dailyCalories"] as? Double
                 )
             }
         }

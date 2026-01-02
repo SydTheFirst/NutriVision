@@ -19,6 +19,24 @@ struct RecordingView: View {
     @State private var showAddTodayAlert = false
     @State private var mealName: String = ""
     @State private var isScanning = true
+    
+    @StateObject var dataManager = DataManager()
+    
+    @State private var todayCalories: Double = 0
+    // Separate property for reuse
+    var dailyCalorieGoal: Double {
+        dataManager.getDailyCalorieGoal()
+    }
+
+    // Use the total including today
+    var totalCaloriesIncludingToday: Double {
+        totalCalories + dataManager.todayCalories
+    }
+
+    var calorieProgress: Double {
+        guard dailyCalorieGoal > 0 else { return 0 }
+        return min(totalCaloriesIncludingToday / dailyCalorieGoal, 1.0)
+    }
 
     // Service for manual simulation and API testing
     private let nutritionService = NutritionService()
@@ -36,7 +54,7 @@ struct RecordingView: View {
     var body: some View {
         VStack(spacing: 0) {
             // 1. Camera Feed (30% Height)
-            ZStack(alignment: .bottomTrailing) {
+            ZStack {
                 ARCameraView(
                     detectedIngredients: $detectedIngredients,
                     calories: totalCalories,
@@ -46,22 +64,75 @@ struct RecordingView: View {
                     isScanning: $isScanning
                 )
                 .ignoresSafeArea()
+                
+                // Progress bar section at bottom
+                VStack {
+                    Spacer() // push progress bar to bottom
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            // Left label
+                            Text("Kcal daily goal")
+                                .font(.caption2.bold())
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(Color.orange)
+                                .cornerRadius(10)
+                            
+                            // Current / Goal text
+                            Text("\(Int(totalCaloriesIncludingToday)) / \(Int(dailyCalorieGoal)) Kcal")
+                                .font(.caption2.bold())
+                                .foregroundColor(.white.opacity(0.85))
 
+                            Spacer()
+                            
+                            // Right percentage
+                            Text("\(Int(calorieProgress * 100))%")
+                                .font(.caption2.bold())
+                                .foregroundColor(.orange)
+                        }
+                        
+                        // Progress Bar
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 8)
+                            
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.orange)
+                                .frame(width: CGFloat(calorieProgress) * UIScreen.main.bounds.width * 0.85, height: 8)
+                                .animation(.easeInOut(duration: 0.3), value: calorieProgress)
+                        }
+                    }
+                    .cornerRadius(12)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 25)
+                }
+                
+                // Overlay for top-right AI label
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text(isScanning ? "AI ACTIVE" : "PAUSED")
+                            .font(.caption2.bold())
+                            .padding(6)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(8)
+                            .padding()
+                    }
+                    Spacer()
+                }
+                
+                // Optional overlay when not scanning
                 if !isScanning {
                     Color.black.opacity(0.25)
                         .ignoresSafeArea()
                         .transition(.opacity)
                 }
-
-                Text(isScanning ? "AI ACTIVE" : "PAUSED")
-                    .font(.caption2.bold())
-                    .padding(6)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(8)
-                    .padding()
             }
             .frame(height: UIScreen.main.bounds.height * 0.30)
-
+            
             // 2. Nutrition Details Area
             VStack(spacing: 0) {
                 // Horizontal Summary Pills
@@ -170,6 +241,9 @@ struct RecordingView: View {
             .padding(.horizontal)
             .padding(.bottom, 20)
             .background(Color(.systemBackground))
+        }
+        .onAppear {
+            dataManager.fetchTodayCalories()
         }
         .navigationTitle("Live Scan")
         .navigationBarTitleDisplayMode(.inline)

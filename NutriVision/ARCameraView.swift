@@ -52,7 +52,7 @@ struct ARCameraView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
+
     class Coordinator: NSObject, ARSessionDelegate {
         var parent: ARCameraView
         weak var sceneView: ARSCNView?
@@ -67,11 +67,25 @@ struct ARCameraView: UIViewRepresentable {
         private var pendingLabels = Set<String>()
         
         private var detectedIngredientNames = Set<String>()
+        private var ingredientCards: [UUID: SCNNode] = [:]
+        private var lastVisionRun = Date.distantPast
 
         init(_ parent: ARCameraView) {
             self.parent = parent
             super.init()
             setupVision()
+            
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleIngredientRemoval(_:)),
+                name: .removeIngredientARCard,
+                object: nil
+            )
+        }
+        
+        @objc private func handleIngredientRemoval(_ notification: Notification) {
+            guard let id = notification.object as? UUID else { return }
+            removeIngredientCard(id: id)
         }
         
         private func setupVision() {
@@ -88,6 +102,9 @@ struct ARCameraView: UIViewRepresentable {
         
         func session(_ session: ARSession, didUpdate frame: ARFrame) {
             guard parent.isScanning else { return }
+
+            guard Date().timeIntervalSince(lastVisionRun) > 0.3 else { return }
+            lastVisionRun = Date()
 
             let handler = VNImageRequestHandler(
                 cvPixelBuffer: frame.capturedImage,
@@ -190,6 +207,28 @@ struct ARCameraView: UIViewRepresentable {
                                 var updated = ingredient
                                 updated.areaScore = CGFloat(weight)
                                 self.parent.detectedIngredients[index] = updated
+                                
+                                if let sceneView = self.sceneView,
+                                   let camera = sceneView.pointOfView {
+
+                                    let transform = camera.transform
+                                    let position = SCNVector3(
+                                        transform.m41,
+                                        transform.m42 - 0.05,
+                                        transform.m43 - 0.3
+                                    )
+
+                                    // Remove existing card if any
+                                    self.ingredientCards[updated.id]?.removeFromParentNode()
+
+                                    let card = self.makeIngredientInfoCard(
+                                        ingredient: updated,
+                                        position: position
+                                    )
+
+                                    sceneView.scene.rootNode.addChildNode(card)
+                                    self.ingredientCards[updated.id] = card
+                                }
                                 print("API Success for \(label)")
                             }
                             self.pendingLabels.remove(label)
@@ -284,5 +323,125 @@ struct ARCameraView: UIViewRepresentable {
             sceneView.scene.rootNode.addChildNode(root)
             chartNode = root
         }
+        
+        private func highestMacro(
+            protein: Double,
+            carbs: Double,
+            fats: Double
+        ) -> (value: Double, label: String, icon: String, color: UIColor) {
+
+            let macros = [
+                ("Protein", protein, "leaf.fill", UIColor.green),
+                ("Carbs", carbs, "bolt.fill", UIColor.purple),
+                ("Fats", fats, "drop.fill", UIColor.red)
+            ]
+
+            let maxMacro = macros.max(by: { $0.1 < $1.1 })!
+            return (maxMacro.1, maxMacro.0, maxMacro.2, maxMacro.3)
+        }
+
+        private func makeIngredientInfoCard(
+            ingredient: Ingredient,
+            position: SCNVector3
+        ) -> SCNNode {
+
+            let cardWidth: CGFloat = 0.12
+            let cardHeight: CGFloat = 0.08
+
+            let root = SCNNode()
+
+            // --- Background ---
+            let bg = SCNPlane(width: cardWidth, height: cardHeight)
+            bg.cornerRadius = 0.015
+            bg.firstMaterial?.diffuse.contents = UIColor(white: 0.1, alpha: 0.9)
+            bg.firstMaterial?.isDoubleSided = true
+
+            let bgNode = SCNNode(geometry: bg)
+            root.addChildNode(bgNode)
+
+            // --- Billboard ---
+            let billboard = SCNBillboardConstraint()
+            billboard.freeAxes = .Y
+            root.constraints = [billboard]
+
+            // --- Title (class name) ---
+            let title = SCNText(string: ingredient.name.capitalized, extrusionDepth: 0)
+            title.font = UIFont.systemFont(ofSize: 4, weight: .semibold)
+            title.flatness = 0.2
+            title.firstMaterial?.diffuse.contents = UIColor.white
+
+            let titleNode = SCNNode(geometry: title)
+            titleNode.scale = SCNVector3(0.004, 0.004, 0.004)
+            titleNode.position = SCNVector3(-0.05, 0.018, 0.001)
+            root.addChildNode(titleNode)
+
+            // --- Portion size ---
+            let gramsText = "\(Int(ingredient.amount)) \(ingredient.unit)"
+            let grams = SCNText(string: gramsText, extrusionDepth: 0)
+            grams.font = UIFont.systemFont(ofSize: 3)
+            grams.flatness = 0.2
+            grams.firstMaterial?.diffuse.contents = UIColor.lightGray
+
+            let gramsNode = SCNNode(geometry: grams)
+            gramsNode.scale = SCNVector3(0.004, 0.004, 0.004)
+            gramsNode.position = SCNVector3(-0.05, -0.002, 0.001)
+            root.addChildNode(gramsNode)
+
+            // --- Highest macro ---
+            let macro = highestMacro(
+                protein: ingredient.protein,
+                carbs: ingredient.carbs,
+                fats: ingredient.fats
+            )
+
+            // --- Macro text (WHITE) ---
+            let macroText = "\(macro.label): \(Int(macro.value))g"
+            let macroLabel = SCNText(string: macroText, extrusionDepth: 0)
+            macroLabel.font = UIFont.systemFont(ofSize: 3, weight: .medium)
+            macroLabel.flatness = 0.2
+            macroLabel.firstMaterial?.diffuse.contents = UIColor.white
+            macroLabel.firstMaterial?.emission.contents = UIColor.white // AR visibility
+
+            let macroNode = SCNNode(geometry: macroLabel)
+            macroNode.scale = SCNVector3(0.004, 0.004, 0.004)
+            macroNode.position = SCNVector3(-0.03, -0.022, 0.001)
+            root.addChildNode(macroNode)
+
+            // --- Macro icon (COLORED) ---
+            if let iconImage = UIImage(systemName: macro.icon) {
+                let iconPlane = SCNPlane(width: 0.015, height: 0.015)
+
+                let material = SCNMaterial()
+                material.diffuse.contents = iconImage
+                material.emission.contents = macro.color // icon color
+                material.isDoubleSided = true
+
+                iconPlane.materials = [material]
+
+                let iconNode = SCNNode(geometry: iconPlane)
+                iconNode.position = SCNVector3(0.045, -0.02, 0.002)
+
+                // Face the camera
+                let constraint = SCNBillboardConstraint()
+                constraint.freeAxes = .Y
+                iconNode.constraints = [constraint]
+
+                root.addChildNode(iconNode)
+            }
+
+            root.position = position
+            return root
+        }
+
+        func removeIngredientCard(id: UUID) {
+            if let node = ingredientCards[id] {
+                node.removeFromParentNode()
+                ingredientCards.removeValue(forKey: id)
+            }
+        }
     }
+}
+
+extension Notification.Name {
+    static let removeIngredientARCard = Notification.Name("removeIngredientARCard")
 }

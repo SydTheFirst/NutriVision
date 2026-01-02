@@ -111,7 +111,13 @@ struct RecordingView: View {
                                         ingredient: ingredient,
                                         onDelete: {
                                             if let index = detectedIngredients.firstIndex(where: { $0.id == ingredient.id }) {
+                                                let removed = detectedIngredients[index]
                                                 detectedIngredients.remove(at: index)
+
+                                                NotificationCenter.default.post(
+                                                    name: .removeIngredientARCard,
+                                                    object: removed.id
+                                                )
                                             }
                                         }
                                     )

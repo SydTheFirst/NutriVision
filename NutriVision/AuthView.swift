@@ -7,8 +7,12 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
+import FirebaseFirestore
+import GoogleSignIn
+import GoogleSignInSwift
 
-enum AuthType{
+enum AuthType {
     case login
     case register
 }
@@ -27,7 +31,6 @@ struct AuthView: View {
     @FocusState private var isPassFocused
         
     @State private var showPass = false
-
     @State private var authType: AuthType = .login
     
     @State private var showAlert = false
@@ -35,64 +38,42 @@ struct AuthView: View {
     @State private var isLoading = false
     
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             ScrollView(showsIndicators: false) {
                 TopView()
                 SegmentedView(authType: $authType)
                 
                 VStack(spacing: 15) {
-                    TextField(text: $email) {
-                        Text("Email")
-                    }
-                    .focused($isEmailFocused)
-                    .textFieldStyle(AuthTextFieldStyle(isFocused: $isEmailFocused))
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
+                    TextField("Email", text: $email)
+                        .focused($isEmailFocused)
+                        .textFieldStyle(AuthTextFieldStyle(isFocused: $isEmailFocused))
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                     
                     ZStack {
-                        TextField(text: $password) {
-                            Text("Password")
+                        if showPass {
+                            TextField("Password", text: $password)
+                                .focused($isPassFocused)
+                                .textFieldStyle(AuthTextFieldStyle(isFocused: $isPassFocused))
+                        } else {
+                            SecureField("Password", text: $password)
+                                .focused($isPassFocused)
+                                .textFieldStyle(AuthTextFieldStyle(isFocused: $isPassFocused))
                         }
-                        .focused($isPassFocused)
-                        .textFieldStyle(AuthTextFieldStyle(isFocused: $isPassFocused))
-                        .overlay(alignment: .trailing, content: {
-                            Button{
-                                withAnimation {
-                                    showPass.toggle()
-                                }
-                            } label: {
-                                Image(systemName: showPass ? "eye.fill" : "eye.slash.fill")
-                                    .padding()
-                                    .foregroundStyle(Color(UIColor.lightGray))
-                            }
-                        })
-                        
-                        SecureField(text: $password) {
-                            Text("Password")
+                    }
+                    .overlay(alignment: .trailing) {
+                        Button {
+                            withAnimation { showPass.toggle() }
+                        } label: {
+                            Image(systemName: showPass ? "eye.fill" : "eye.slash.fill")
+                                .padding()
+                                .foregroundStyle(Color(UIColor.lightGray))
                         }
-                        .focused($isPassFocused)
-                        .textFieldStyle(AuthTextFieldStyle(isFocused: $isPassFocused))
-                        .overlay(alignment: .trailing) {
-                            Button{
-                                withAnimation {
-                                    showPass.toggle()
-                                }
-                            } label: {
-                                Image(systemName: showPass ? "eye.fill" : "eye.slash.fill")
-                                    .padding()
-                                    .foregroundStyle(Color(UIColor.lightGray))
-                            }
-                        }
-                        .opacity(showPass ? 0 : 1)
                     }
                 }
                 
                 Button {
-                    if authType == .login {
-                        login()
-                    } else {
-                        register()
-                    }
+                    authType == .login ? login() : register()
                 } label: {
                     if isLoading {
                         ProgressView()
@@ -105,7 +86,10 @@ struct AuthView: View {
                 .disabled(isLoading || email.isEmpty || password.isEmpty)
                 .opacity((email.isEmpty || password.isEmpty) ? 0.6 : 1.0)
                 
-                BottomView(authType: $authType)
+                // Pass the googleAction here
+                BottomView(authType: $authType, googleAction: {
+                    signInWithGoogle()
+                })
             }
             .padding()
             .navigationDestination(isPresented: $goToProfileSetup) {
@@ -128,97 +112,101 @@ struct AuthView: View {
         }
     }
     
+    // MARK: - Auth Logic
     func login() {
         isLoading = true
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
-            DispatchQueue.main.async {
-                isLoading = false
-
-                if let error = error {
-                    alertMessage = error.localizedDescription
-                    showAlert = true
-                    return
-                }
-                appState.loadInitialState()
-            }
+            handleFirebaseResponse(result: nil, error: error)
         }
     }
 
-    
     func register() {
         isLoading = true
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            handleFirebaseResponse(result: result, error: error)
+        }
+    }
 
-        Auth.auth().createUser(withEmail: email, password: password) { _, error in
-            DispatchQueue.main.async {
+    // MARK: - Google Sign In
+    func signInWithGoogle() {
+        // 1. Get Client ID from Firebase options
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        // 2. Find the root view controller to present the Google popup
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else { return }
+
+        isLoading = true
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+            if let error = error {
                 isLoading = false
+                print("Google error: \(error.localizedDescription)")
+                return
+            }
 
-                if let error = error {
-                    alertMessage = error.localizedDescription
-                    showAlert = true
-                    return
-                }
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString else {
+                isLoading = false
+                return
+            }
 
-                appState.isLoggedIn = true
-                appState.needsProfileSetup = true
-                appState.email = email
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: user.accessToken.tokenString)
+            
+            Auth.auth().signIn(with: credential) { authResult, error in
+                handleFirebaseResponse(result: authResult, error: error)
             }
         }
     }
 
-
-    
-    func checkProfileCompletion() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        let db = Firestore.firestore()
-        db.collection("Users").document(uid).getDocument { snapshot, error in
-            if let data = snapshot?.data(),
-               let profileCompleted = data["profileCompleted"] as? Bool,
-               profileCompleted {
-                navigateToHome()
-            } else {
-                // Profile not complete - go to setup
-                pendingUserCredential = nil // Already logged in, just incomplete profile
+    private func handleFirebaseResponse(result: AuthDataResult?, error: Error?) {
+        DispatchQueue.main.async {
+            isLoading = false
+            if let error = error {
+                alertMessage = error.localizedDescription
+                showAlert = true
+                return
+            }
+            
+            // If it's a new user (via Register or first time Google)
+            if let isNew = result?.additionalUserInfo?.isNewUser, isNew {
+                appState.isLoggedIn = true
+                appState.needsProfileSetup = true
+                appState.email = result?.user.email ?? email
+                pendingUserCredential = result
                 goToProfileSetup = true
+            } else {
+                // Existing user
+                appState.loadInitialState()
             }
         }
     }
     
     func deleteIncompleteAccount() {
-        // Delete the Firebase Auth account if profile setup was cancelled
         if let user = Auth.auth().currentUser {
             user.delete { error in
                 if let error = error {
-                    print("Error deleting incomplete account: \(error.localizedDescription)")
+                    print("Error deleting account: \(error.localizedDescription)")
                 }
             }
         }
         pendingUserCredential = nil
     }
-    
-    func navigateToHome() {
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first,
-               let navController = window.rootViewController as? UINavigationController {
-                navController.popToRootViewController(animated: true)
-            }
-        }
-    }
 }
 
-struct AuthButtonType: ButtonStyle{
+// MARK: - UI Components (No changes needed to styles)
+
+struct AuthButtonType: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(maxWidth: .infinity)
             .padding(.vertical)
             .foregroundStyle(Color.white)
             .font(.system(size: 20, weight: .bold))
-            .background(
-                LinearGradient(stops: [
-                    .init(color: .blue, location: 1.0)
-                ], startPoint: .leading, endPoint: .trailing)
-            )
+            .background(Color.blue)
             .cornerRadius(15)
             .brightness(configuration.isPressed ? 0.05 : 0)
             .opacity(configuration.isPressed ? 0.5 : 1)
@@ -228,7 +216,6 @@ struct AuthButtonType: ButtonStyle{
 
 struct AuthTextFieldStyle: TextFieldStyle {
     @Environment(\.colorScheme) private var colorScheme
-    
     let isFocused: FocusState<Bool>.Binding
     
     func _body(configuration: TextField<Self._Label>) -> some View {
@@ -236,29 +223,28 @@ struct AuthTextFieldStyle: TextFieldStyle {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(isFocused.wrappedValue ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
-                        .zIndex(1)
-                    
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .light ? Color(uiColor: UIColor.systemGray6) : Color(uiColor: UIColor.systemGray5))
-                        .zIndex(0)
-                }
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .light ? Color(UIColor.systemGray6) : Color(UIColor.systemGray5))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(isFocused.wrappedValue ? Color.blue : Color.gray.opacity(0.5), lineWidth: 1)
+                    )
             )
-            .animation(.easeInOut(duration: 0.2), value: isFocused.wrappedValue)
     }
 }
 
 struct TopView: View {
     var body: some View {
-        Image(systemName: "person.circle")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 75)
-        
-        Text("NutriVision")
-            .font(.system(size: 35, weight: .bold))
+        VStack {
+            Image(systemName: "person.circle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 75)
+            
+            Text("NutriVision")
+                .font(.system(size: 35, weight: .bold))
+        }
+        .padding(.top, 20)
     }
 }
 
@@ -267,89 +253,44 @@ struct SegmentedView: View {
     @Binding var authType: AuthType
     
     var body: some View {
-        HStack(spacing:0) {
-            Button {
-                withAnimation {
-                    authType = .login
-                }
-            } label: {
-                Text("Login")
-                    .fontWeight(authType == .login ? .semibold : .regular)
-                    .foregroundStyle(authType == .login ? (colorScheme == .light ? Color(uiColor: UIColor.darkGray) : .white) : .gray)
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, authType == .login ? 30 : 20)
-                    .background(
-                        ZStack{
-                            if authType == .login {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.black.opacity(0.3), lineWidth: 0.5)
-                                    .zIndex(1)
-                            }
-                            
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(authType == .login ?
-                                      Color(UIColor.systemGray5) :
-                                        Color(UIColor.systemGray6))
-                                .zIndex(0)
-                        })
-            }
-            
-            Button {
-                withAnimation {
-                    authType = .register
-                }
-            } label: {
-                Text("Register")
-                    .fontWeight(authType == .register ? .semibold : .regular)
-                    .foregroundStyle(authType == .register ? (colorScheme == .light ? Color(uiColor: UIColor.darkGray) : .white) : .gray)
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, authType == .register ? 30 : 20)
-                    .background(
-                        ZStack{
-                            if authType == .register {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.black.opacity(0.3), lineWidth: 0.5)
-                                    .zIndex(1)
-                            }
-                            
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(authType == .register ?
-                                      Color(UIColor.systemGray5) :
-                                        Color(UIColor.systemGray6))
-                                .zIndex(0)
-                        })
-            }
+        HStack(spacing: 0) {
+            segmentButton(title: "Login", type: .login)
+            segmentButton(title: "Register", type: .register)
         }
-        .background(
-            Color(UIColor.systemGray6)
-        )
+        .background(Color(UIColor.systemGray6))
         .cornerRadius(20)
         .padding(.horizontal, 20)
         .padding(.bottom, 10)
-        .frame(maxWidth: .infinity)
+    }
+    
+    private func segmentButton(title: String, type: AuthType) -> some View {
+        Button {
+            withAnimation { authType = type }
+        } label: {
+            Text(title)
+                .fontWeight(authType == type ? .semibold : .regular)
+                .foregroundStyle(authType == type ? (colorScheme == .light ? .black : .white) : .gray)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(authType == type ? Color(UIColor.systemGray4) : Color.clear)
+                .cornerRadius(20)
+        }
     }
 }
 
-struct BottomView: View{
+struct BottomView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Binding var authType: AuthType
+    var googleAction: () -> Void // New callback
     
-    var body: some View{
-        VStack(spacing: 20){
-            HStack(spacing: 3){
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack(spacing: 3) {
                 Text(authType == .login ? "Don't have an account?" : "Already have an account?")
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.system(size: 15))
                 
                 Button {
-                    if authType == .login{
-                        withAnimation{
-                            authType = .register
-                        }
-                    } else {
-                        withAnimation{
-                            authType = .login
-                        }
-                    }
+                    withAnimation { authType = (authType == .login ? .register : .login) }
                 } label: {
                     Text(authType == .login ? "Register" : "Login")
                         .font(.system(size: 15, weight: .bold))
@@ -357,51 +298,36 @@ struct BottomView: View{
             }
             
             HStack {
-                Rectangle()
-                    .frame(height: 1.5)
-                    .foregroundStyle(Color.gray.opacity(0.3))
-                Text("OR")
-                    .font(.system(size: 14, weight: .regular))
-                Rectangle()
-                    .frame(height: 1.5)
-                    .foregroundStyle(Color.gray.opacity(0.3))
+                line; Text("OR").font(.caption); line
             }
             
-            HStack(spacing: 20) {
-                //apple
-                Button {
-                    
-                } label: {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(lineWidth: 1.5)
-                        .frame(width: 40, height: 40)
-                        .foregroundStyle(.opacity(0))
-                        .overlay {
-                            Image(systemName: "apple.logo")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20)
-                                .foregroundStyle(colorScheme == .light ? .black : .white)
-                        }
-                }
-                
-                //google
-                Button {
-                    
-                } label: {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(lineWidth: 1.5)
-                        .frame(width: 40, height: 40)
-                        .foregroundStyle(.opacity(0))
-                        .overlay {
-                            Image("google")
-                                .renderingMode(.template)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20)
-                        }
+            HStack() {
+                // Google
+                Button(action: googleAction) {
+                    socialIcon(imageName: "google")
                 }
             }
         }
+    }
+    
+    var line: some View {
+        Rectangle().frame(height: 1).foregroundStyle(Color.gray.opacity(0.3))
+    }
+    
+    private func socialIcon(systemName: String? = nil, imageName: String? = nil) -> some View {
+        RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.gray.opacity(0.3), lineWidth: 1.5)
+            .frame(width: 44, height: 44)
+            .overlay {
+                if let systemName = systemName {
+                    Image(systemName: systemName)
+                        .foregroundStyle(colorScheme == .light ? .black : .white)
+                } else if let imageName = imageName {
+                    Image(imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 22)
+                }
+            }
     }
 }

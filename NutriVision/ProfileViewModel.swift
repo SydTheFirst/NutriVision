@@ -18,7 +18,9 @@ final class ProfileViewModel: ObservableObject {
     @Published var showDeleteAlert = false
     @Published var showLogoutAlert = false
     @Published var isDeleting = false
-    
+    @Published var didLogout = false
+    @Published var didDeleteAccount = false
+
     // MARK: - Editable fields
     @Published var editName = ""
     @Published var editAge = ""
@@ -160,5 +162,45 @@ final class ProfileViewModel: ObservableObject {
     private func showCancelAlert() {
         showAlert = true
         alertMessage = "Cancel action triggered"
+    }
+    
+    func logout() {
+        do {
+            try Auth.auth().signOut()
+            didLogout = true
+        } catch {
+            showAlert = true
+            alertMessage = "Failed to logout: \(error.localizedDescription)"
+        }
+    }
+    
+    func deleteAccount() {
+        guard let firebaseUser = Auth.auth().currentUser else { return }
+        guard let uid = firebaseUser.uid as String? else { return }
+
+        isDeleting = true
+        let db = Firestore.firestore()
+
+        // 1️⃣ Delete Firestore user document
+        db.collection("Users").document(uid).delete { [weak self] error in
+            if let error = error {
+                self?.isDeleting = false
+                self?.showAlert = true
+                self?.alertMessage = "Failed to delete user data: \(error.localizedDescription)"
+                return
+            }
+
+            // 2️⃣ Delete Auth account
+            firebaseUser.delete { error in
+                self?.isDeleting = false
+
+                if let error = error {
+                    self?.showAlert = true
+                    self?.alertMessage = "Failed to delete account: \(error.localizedDescription)"
+                } else {
+                    self?.didDeleteAccount = true
+                }
+            }
+        }
     }
 }

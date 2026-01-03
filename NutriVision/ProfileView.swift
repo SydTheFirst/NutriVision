@@ -48,6 +48,41 @@ struct ProfileView: View {
                 }
             }
         }
+        .confirmationDialog(
+            "Logout",
+            isPresented: $vm.showLogoutAlert,
+            titleVisibility: .visible
+        ) {
+            Button("Logout", role: .destructive) {
+                vm.logout()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to logout?")
+        }
+        .confirmationDialog(
+            "Delete Account",
+            isPresented: $vm.showDeleteAlert,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Account", role: .destructive) {
+                vm.deleteAccount()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This action is permanent and cannot be undone.")
+        }
+        .onChange(of: vm.didLogout) { didLogout in
+            guard didLogout else { return }
+            appState.logout()
+            dismiss()
+        }
+
+        .onChange(of: vm.didDeleteAccount) { didDelete in
+            guard didDelete else { return }
+            appState.isLoggedIn = false
+            dismiss()
+        }
     }
     
     // MARK: - Subviews

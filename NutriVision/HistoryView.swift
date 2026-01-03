@@ -13,6 +13,11 @@ struct HistoryView: View {
     @State private var groupedMeals: [Date: [Meal]] = [:]
     @State private var expandedDays: Set<Date> = []
     @State private var isLoading = true
+    private let repository: MealRepository
+    
+    init(repository: MealRepository = FirestoreMealRepository()) {
+        self.repository = repository
+    }
 
     // Get the last 7 days including today
     var lastSevenDays: [Date] {
@@ -35,11 +40,7 @@ struct HistoryView: View {
                             isExpanded: expandedDays.contains(date),
                             toggle: {
                                 withAnimation(.spring()) {
-                                    if expandedDays.contains(date) {
-                                        expandedDays.remove(date)
-                                    } else {
-                                        expandedDays.insert(date)
-                                    }
+                                    expandedDays = ExpandedDaysLogic.toggle(date, in: expandedDays)
                                 }
                             }
                         )
@@ -87,9 +88,7 @@ struct HistoryView: View {
                 // Filter out any that still managed to have a nil ID (to satisfy SwiftUI)
                 let validMeals = decodedMeals.filter { $0.id != nil }
                 
-                self.groupedMeals = Dictionary(grouping: validMeals) { meal in
-                    Calendar.current.startOfDay(for: meal.date)
-                }
+                self.groupedMeals = HistoryGrouping.groupMealsByDay(validMeals)
                 
                 if expandedDays.isEmpty {
                     expandedDays = Set(lastSevenDays)
@@ -100,21 +99,7 @@ struct HistoryView: View {
     
     func renameMeal(mealID: String, newName: String) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        let db = Firestore.firestore()
-        
-        // Use the specific document ID to update the existing record
-        let mealRef = db.collection("Users").document(uid).collection("Meals").document(mealID)
-        
-        mealRef.updateData([
-            "name": newName,
-            "isSaved": true // Ensure it's marked as saved
-        ]) { error in
-            if let error = error {
-                print("Error updating meal: \(error)")
-            } else {
-                print("Meal successfully renamed!")
-            }
-        }
+        repository.renameMeal(userID: uid, mealID: mealID, newName: newName)
     }
 }
 
@@ -407,5 +392,25 @@ struct MacroMiniView: View {
             Text(label).font(.caption2).bold().foregroundColor(color)
             Text("\(Int(value))\(label == "Cals" ? "" : "g")").font(.caption).bold()
         }
+    }
+}
+
+struct HistoryGrouping {
+    static func groupMealsByDay(_ meals: [Meal]) -> [Date: [Meal]] {
+        Dictionary(grouping: meals) {
+            Calendar.current.startOfDay(for: $0.date)
+        }
+    }
+}
+
+struct ExpandedDaysLogic {
+    static func toggle(_ day: Date, in set: Set<Date>) -> Set<Date> {
+        var updated = set
+        if updated.contains(day) {
+            updated.remove(day)
+        } else {
+            updated.insert(day)
+        }
+        return updated
     }
 }

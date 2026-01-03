@@ -11,11 +11,25 @@ import FirebaseAuth
 
 struct SavedMealsView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @State private var meals: [Meal] = []
-    @State private var filteredMeals: [Meal] = []
-    @State private var searchText = ""
-    @State private var isLoading = true
+    @State private var meals: [Meal]
+    @State private var filteredMeals: [Meal]
+    @State private var searchText: String
+    @State private var isLoading: Bool
     @State private var expandedMealID: String?
+
+    init(
+        meals: [Meal] = [],
+        filteredMeals: [Meal] = [],
+        searchText: String = "",
+        isLoading: Bool = true,
+        expandedMealID: String? = nil
+    ) {
+        _meals = State(initialValue: meals)
+        _filteredMeals = State(initialValue: filteredMeals)
+        _searchText = State(initialValue: searchText)
+        _isLoading = State(initialValue: isLoading)
+        _expandedMealID = State(initialValue: expandedMealID)
+    }
     
     var body: some View {
         ZStack {

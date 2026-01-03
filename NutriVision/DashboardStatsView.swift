@@ -10,8 +10,16 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct DashboardStatsView: View {
-    @StateObject private var vm = NutritionViewModel()
-    @State private var selectedTimeSpan: TimeSpan = .daily
+    @StateObject private var vm: NutritionViewModel
+    @State private var selectedTimeSpan: TimeSpan
+    
+    init(
+        vm: NutritionViewModel = NutritionViewModel(),
+        initialTimeSpan: TimeSpan = .daily
+    ) {
+        _vm = StateObject(wrappedValue: vm)
+        _selectedTimeSpan = State(initialValue: initialTimeSpan)
+    }
     
     var body: some View {
         VStack(spacing: 15) {

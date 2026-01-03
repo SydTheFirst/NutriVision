@@ -6,333 +6,227 @@
 //
 
 import SwiftUI
-import Firebase
-import FirebaseAuth
-import FirebaseFirestore
 
 struct RecordingView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var detectedIngredients: [Ingredient] = []
-    
-    // Naming alert state
-    @State private var showNamingAlert = false
-    @State private var showAddTodayAlert = false
-    @State private var mealName: String = ""
-    @State private var isScanning = true
-    
-    @StateObject var dataManager = DataManager()
-    
-    @State private var todayCalories: Double = 0
-    // Separate property for reuse
-    var dailyCalorieGoal: Double {
-        dataManager.getDailyCalorieGoal()
-    }
-
-    // Use the total including today
-    var totalCaloriesIncludingToday: Double {
-        totalCalories + dataManager.todayCalories
-    }
-
-    var calorieProgress: Double {
-        guard dailyCalorieGoal > 0 else { return 0 }
-        return min(totalCaloriesIncludingToday / dailyCalorieGoal, 1.0)
-    }
-
-    // Service for manual simulation and API testing
-    private let nutritionService = NutritionService()
-
-    // Computed totals
-    var totalCalories: Double { detectedIngredients.reduce(0) { $0 + $1.calories } }
-    var totalProtein: Double { detectedIngredients.reduce(0) { $0 + $1.protein } }
-    var totalCarbs: Double { detectedIngredients.reduce(0) { $0 + $1.carbs } }
-    var totalFats: Double { detectedIngredients.reduce(0) { $0 + $1.fats } }
-    
-    var totalIngredientAreaScore: CGFloat {
-        detectedIngredients.reduce(0) { $0 + $1.areaScore }
-    }
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var vm = RecordingViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
-            // 1. Camera Feed (30% Height)
+
+            // MARK: - Camera Feed
             ZStack {
                 ARCameraView(
-                    detectedIngredients: $detectedIngredients,
-                    calories: totalCalories,
-                    protein: totalProtein,
-                    carbs: totalCarbs,
-                    fats: totalFats,
-                    isScanning: $isScanning
+                    detectedIngredients: $vm.detectedIngredients,
+                    calories: vm.totalCalories,
+                    protein: vm.totalProtein,
+                    carbs: vm.totalCarbs,
+                    fats: vm.totalFats,
+                    isScanning: $vm.isScanning
                 )
                 .ignoresSafeArea()
-                
-                // Progress bar section at bottom
-                VStack {
-                    Spacer() // push progress bar to bottom
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack {
-                            // Left label
-                            Text("Kcal daily goal")
-                                .font(.caption2.bold())
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.orange)
-                                .cornerRadius(10)
-                            
-                            // Current / Goal text
-                            Text("\(Int(totalCaloriesIncludingToday)) / \(Int(dailyCalorieGoal)) Kcal")
-                                .font(.caption2.bold())
-                                .foregroundColor(.white.opacity(0.85))
 
-                            Spacer()
-                            
-                            // Right percentage
-                            Text("\(Int(calorieProgress * 100))%")
-                                .font(.caption2.bold())
-                                .foregroundColor(.orange)
-                        }
-                        
-                        // Progress Bar
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(height: 8)
-                            
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.orange)
-                                .frame(width: CGFloat(calorieProgress) * UIScreen.main.bounds.width * 0.85, height: 8)
-                                .animation(.easeInOut(duration: 0.3), value: calorieProgress)
-                        }
-                    }
-                    .cornerRadius(12)
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 25)
-                }
-                
-                // Overlay for top-right AI label
-                VStack {
-                    HStack {
-                        Spacer()
-                        Text(isScanning ? "AI ACTIVE" : "PAUSED")
-                            .font(.caption2.bold())
-                            .padding(6)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(8)
-                            .padding()
-                    }
-                    Spacer()
-                }
-                
-                // Optional overlay when not scanning
-                if !isScanning {
+                calorieOverlay
+                scanningOverlay
+
+                if !vm.isScanning {
                     Color.black.opacity(0.25)
                         .ignoresSafeArea()
                         .transition(.opacity)
                 }
             }
             .frame(height: UIScreen.main.bounds.height * 0.30)
-            
-            // 2. Nutrition Details Area
-            VStack(spacing: 0) {
-                // Horizontal Summary Pills
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 9) {
-                        SummaryPill(title: "Calories", value: String(format: "%.0fkcal", totalCalories), icon: "flame.fill", color: .orange)
-                        SummaryPill(title: "Protein", value: String(format: "%.1fg", totalProtein), icon: "leaf.fill", color: .green)
-                        SummaryPill(title: "Carbs", value: String(format: "%.1fg", totalCarbs), icon: "bolt.fill", color: .purple)
-                        SummaryPill(title: "Fats", value: String(format: "%.1fg", totalFats), icon: "drop.fill", color: .red)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 25)
+
+            // MARK: - Nutrition Details Area
+            nutritionDetails
+
+            // MARK: - Action Buttons
+            actionButtons
+        }
+        .onAppear { vm.onAppear() }
+        .navigationTitle("Live Scan")
+        .navigationBarTitleDisplayMode(.inline)
+        .alert(isPresented: $vm.showNamingAlert) { saveMealAlert }
+        .alert(isPresented: $vm.showAddTodayAlert) { addToTodayAlert }
+    }
+}
+
+// MARK: - UI Helpers
+private extension RecordingView {
+    
+    private var saveMealAlert: Alert {
+        Alert(
+            title: Text("Name your meal"),
+            message: Text("Save this meal to your favorites"),
+            primaryButton: .default(Text("Save")) { vm.saveMeal(dismiss: { dismiss() }) },
+            secondaryButton: .cancel {
+                vm.cancelNaming()
+            }
+        )
+    }
+
+    private var addToTodayAlert: Alert {
+        Alert(
+            title: Text("Add to Today"),
+            message: Text("Add this meal to today's nutrition log"),
+            primaryButton: .default(Text("Add")) { vm.addToToday(dismiss: { dismiss() }) },
+            secondaryButton: .cancel()
+        )
+    }
+
+    var calorieOverlay: some View {
+        VStack {
+            Spacer()
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("Kcal daily goal")
+                        .font(.caption2.bold())
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Color.orange)
+                        .cornerRadius(10)
+
+                    Text("\(Int(vm.totalCaloriesIncludingToday)) / \(Int(vm.dailyCalorieGoal)) Kcal")
+                        .font(.caption2.bold())
+                        .foregroundColor(.white.opacity(0.85))
+
+                    Spacer()
+
+                    Text("\(Int(vm.calorieProgress * 100))%")
+                        .font(.caption2.bold())
+                        .foregroundColor(.orange)
                 }
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        HStack {
-                            Text("Detected Ingredients")
-                                .font(.title3.bold())
-                            
-                            Spacer()
-                            
-                            // Só para simular chamada à API
-                            #if targetEnvironment(simulator)
-                            HStack(spacing: 8) {
-                                Button("🧪 Pizza") { simulateDetection(name: "pizza", grams: 250) }
-                                Button("🧪 Apple") { simulateDetection(name: "apple", grams: 150) }
-                            }
-                            .font(.caption2)
-                            .buttonStyle(.bordered)
-                            #endif
-                        }
-                        .padding(.horizontal)
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(height: 8)
 
-                        if detectedIngredients.isEmpty {
-                            VStack(spacing: 10) {
-                                ProgressView()
-                                Text("Detecting ingredients...")
-                                    .foregroundColor(.secondary)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 50)
-                        } else {
-                            VStack(spacing: 12) {
-                                ForEach(detectedIngredients) { ingredient in
-                                    DetectedIngredientRow(
-                                        ingredient: ingredient,
-                                        onDelete: {
-                                            if let index = detectedIngredients.firstIndex(where: { $0.id == ingredient.id }) {
-                                                let removed = detectedIngredients[index]
-                                                detectedIngredients.remove(at: index)
-
-                                                NotificationCenter.default.post(
-                                                    name: .removeIngredientARCard,
-                                                    object: removed.id
-                                                )
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                    .padding(.vertical)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.orange)
+                        .frame(
+                            width: CGFloat(vm.calorieProgress) * UIScreen.main.bounds.width * 0.85,
+                            height: 8
+                        )
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-            .offset(y: -20)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 25)
+        }
+    }
 
-            // 3. Action Buttons
-            HStack(spacing: 12) {
-                Button(action: {
-                    isScanning = false
-                    showNamingAlert = true
-                }) {
-                    Text("Save Meal")
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(detectedIngredients.isEmpty ? Color.gray.opacity(0.5) : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(15)
+    var scanningOverlay: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text(vm.isScanning ? "AI ACTIVE" : "PAUSED")
+                    .font(.caption2.bold())
+                    .padding(6)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(8)
+                    .padding()
+            }
+            Spacer()
+        }
+    }
+
+    var nutritionDetails: some View {
+        VStack(spacing: 0) {
+            // Horizontal Summary Pills
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 9) {
+                    SummaryPill(title: "Calories", value: String(format: "%.0fkcal", vm.totalCalories), icon: "flame.fill", color: .orange)
+                    SummaryPill(title: "Protein", value: String(format: "%.1fg", vm.totalProtein), icon: "leaf.fill", color: .green)
+                    SummaryPill(title: "Carbs", value: String(format: "%.1fg", vm.totalCarbs), icon: "bolt.fill", color: .purple)
+                    SummaryPill(title: "Fats", value: String(format: "%.1fg", vm.totalFats), icon: "drop.fill", color: .red)
                 }
-                .disabled(detectedIngredients.isEmpty)
-                
-                Button(action: {
-                    isScanning = false
-                    showAddTodayAlert = true
-                }) {
+                .padding(.horizontal, 16)
+                .padding(.top, 25)
+            }
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
                     HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add to Today")
+                        Text("Detected Ingredients")
+                            .font(.title3.bold())
+
+                        Spacer()
+
+                        // Buttons for simulator testing
+                        #if targetEnvironment(simulator)
+                        HStack(spacing: 8) {
+                            Button("🧪 Pizza") { vm.simulateDetection(name: "pizza", grams: 250) }
+                            Button("🧪 Apple") { vm.simulateDetection(name: "apple", grams: 150) }
+                        }
+                        .font(.caption2)
+                        .buttonStyle(.bordered)
+                        #endif
                     }
+                    .padding(.horizontal)
+
+                    if vm.detectedIngredients.isEmpty {
+                        VStack(spacing: 10) {
+                            ProgressView()
+                            Text("Detecting ingredients...")
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 50)
+                    } else {
+                        VStack(spacing: 12) {
+                            ForEach(vm.detectedIngredients) { ingredient in
+                                DetectedIngredientRow(
+                                    ingredient: ingredient,
+                                    onDelete: { vm.deleteIngredient(ingredient) }
+                                )
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.vertical)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+        .offset(y: -20)
+    }
+
+    var actionButtons: some View {
+        HStack(spacing: 12) {
+            Button {
+                vm.startSaveMeal()
+            } label: {
+                Text("Save Meal")
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(detectedIngredients.isEmpty ? Color.gray.opacity(0.5) : Color.green)
+                    .background(vm.detectedIngredients.isEmpty ? Color.gray.opacity(0.5) : Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(15)
-                }
-                .disabled(detectedIngredients.isEmpty)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 20)
-            .background(Color(.systemBackground))
-        }
-        .onAppear {
-            dataManager.fetchTodayCalories()
-        }
-        .navigationTitle("Live Scan")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert("Name your meal", isPresented: $showNamingAlert) {
-            TextField("e.g., Morning Shake", text: $mealName)
-            Button("Save", action: saveMeal)
-            Button("Cancel", role: .cancel) {
-                mealName = ""
-                isScanning = true
-            }
-        } message: {
-            Text("Save this meal to your favorites")
-        }
-        .alert("Add to Today", isPresented: $showAddTodayAlert) {
-            TextField("Meal name (optional)", text: $mealName)
-            Button("Add", action: addToToday)
-            Button("Cancel", role: .cancel) { mealName = "" }
-        } message: {
-            Text("Add this meal to today's nutrition log")
-        }
-    }
+            .disabled(vm.detectedIngredients.isEmpty)
 
-    func simulateDetection(name: String, grams: Int) {
-        let placeholder = Ingredient(aiDetectedName: name)
-        detectedIngredients.append(placeholder)
-        
-        Task {
-            do {
-                if let fetched = try await nutritionService.fetchNutrition(for: "\(grams)g \(name)") {
-                    await MainActor.run {
-                        if let index = detectedIngredients.firstIndex(where: { $0.name == name }) {
-                            var updated = fetched
-                            updated.areaScore = CGFloat(grams) / 2.5
-                            detectedIngredients[index] = updated
-                        }
-                    }
+            Button {
+                vm.startAddToToday()
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add to Today")
                 }
-            } catch {
-                print("Simulation Error: \(error)")
+                .bold()
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(vm.detectedIngredients.isEmpty ? Color.gray.opacity(0.5) : Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(15)
             }
+            .disabled(vm.detectedIngredients.isEmpty)
         }
-    }
-
-    func saveMeal() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let db = Firestore.firestore()
-        let finalName = mealName.isEmpty ? "Detected Meal" : mealName
-        
-        let newMeal = Meal(
-            userID: uid,
-            name: finalName,
-            date: Date(),
-            isSaved: true,
-            ingredients: detectedIngredients
-        )
-        
-        do {
-            try db.collection("Users").document(uid).collection("Meals").addDocument(from: newMeal)
-            triggerSuccessFeedback()
-            dismiss()
-        } catch {
-            print("Error: \(error.localizedDescription)")
-        }
-    }
-    
-    func addToToday() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let db = Firestore.firestore()
-        let finalName = mealName.isEmpty ? "Quick Meal" : mealName
-        
-        let todayMeal = Meal(
-            userID: uid,
-            name: finalName,
-            date: Date(),
-            isSaved: false,
-            ingredients: detectedIngredients
-        )
-        
-        do {
-            try db.collection("Users").document(uid).collection("Meals").addDocument(from: todayMeal)
-            triggerSuccessFeedback()
-            dismiss()
-        } catch {
-            print("Error adding meal: \(error.localizedDescription)")
-        }
-    }
-    
-    private func triggerSuccessFeedback() {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.success)
+        .padding(.horizontal)
+        .padding(.bottom, 20)
+        .background(Color(.systemBackground))
     }
 }

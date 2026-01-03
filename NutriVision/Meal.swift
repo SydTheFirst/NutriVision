@@ -77,3 +77,29 @@ struct Meal: Identifiable, Equatable, Codable {
         self.fats = try container.decodeIfPresent(Double.self, forKey: .fats) ?? 0.0
     }
 }
+
+extension Meal {
+    init(
+        id: String? = nil,
+        userID: String? = nil,
+        name: String,
+        date: Date = Date(),
+        isSaved: Bool? = false,
+        ingredients: [Ingredient] = [],
+        calories: Double,
+        protein: Double,
+        carbs: Double,
+        fats: Double
+    ) {
+        self.id = id
+        self.userID = userID
+        self.name = name
+        self.date = date
+        self.isSaved = isSaved
+        self.ingredients = ingredients
+        self.calories = calories
+        self.protein = protein
+        self.carbs = carbs
+        self.fats = fats
+    }
+}

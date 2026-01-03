@@ -8,12 +8,21 @@
 import Foundation
 
 class NutritionService {
-    let appId = "a4eb991b"
-    let appKey = "abea559f58e2c8542b4d117e375317ac"
     
-    // Global tracker shared across the whole app
+    private let session: URLSession
+    private let appId: String
+    private let appKey: String
+
     private static var lastGlobalCallTime: Date?
-    private static let minInterval: TimeInterval = 6.5 // Force ~9 calls per minute max
+    private static let minInterval: TimeInterval = 6.5 // ~9 calls per minute
+
+    init(appId: String = "a4eb991b",
+        appKey: String = "abea559f58e2c8542b4d117e375317ac",
+        session: URLSession = .shared) {
+        self.appId = appId
+        self.appKey = appKey
+        self.session = session
+    }
 
     func fetchNutrition(for query: String) async throws -> Ingredient? {
         // --- GLOBAL SAFETY LIMITER ---
@@ -25,14 +34,10 @@ class NutritionService {
         NutritionService.lastGlobalCallTime = Date()
         // -----------------------------
 
-        print("API: Fetching for [\(query)]")
-        
-        let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
-        let urlString = "https://api.edamam.com/api/nutrition-data?app_id=\(appId)&app_key=\(appKey)&ingr=\(encodedQuery)"
-        
-        guard let url = URL(string: urlString) else { return nil }
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
+        print("API: Fetching for [\(query)]")   
+        guard let url = url(for: query) else { return nil }
+
+        let (data, response) = try await session.data(from: url)
         
         if let httpResponse = response as? HTTPURLResponse {
             if httpResponse.statusCode == 429 {
@@ -54,6 +59,16 @@ class NutritionService {
             carbs: nutrients?["CHOCDF"]?.quantity ?? 0,
             fats: nutrients?["FAT"]?.quantity ?? 0
         )
+    }
+    
+    static func setLastCallTime(_ date: Date?) {
+        lastGlobalCallTime = date
+    }
+
+    private func url(for query: String) -> URL? {
+        let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
+        let urlString = "https://api.edamam.com/api/nutrition-data?app_id=\(appId)&app_key=\(appKey)&ingr=\(encoded)"
+        return URL(string: urlString)
     }
 }
 

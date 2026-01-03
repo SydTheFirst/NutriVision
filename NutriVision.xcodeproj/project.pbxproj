@@ -10,6 +10,20 @@
 		132AA54A2EDB6A86009FE8F1 /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */; };
 		134A45122F0434FD00CB3568 /* DetectedIngredientRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134A45112F0434FD00CB3568 /* DetectedIngredientRow.swift */; };
 		134A45142F0438AC00CB3568 /* SummaryPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134A45132F0438AC00CB3568 /* SummaryPill.swift */; };
+		13ACDBC52F08747A00B9C268 /* NutritionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBC42F08747200B9C268 /* NutritionServiceTests.swift */; };
+		13ACDBCB2F087C7D00B9C268 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 13ACDBCA2F087C7D00B9C268 /* ViewInspector */; };
+		13ACDBCF2F087FC300B9C268 /* DataManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBCE2F087FC300B9C268 /* DataManagerTests.swift */; };
+		13ACDBD12F08801C00B9C268 /* ProfileSetupViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBD02F08801C00B9C268 /* ProfileSetupViewTests.swift */; };
+		13ACDBD52F0880D400B9C268 /* ProfileViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBD42F0880D400B9C268 /* ProfileViewTests.swift */; };
+		13ACDBD92F08815A00B9C268 /* NutritionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBD82F08815A00B9C268 /* NutritionViewModelTests.swift */; };
+		13ACDBDD2F0881C800B9C268 /* SavedMealsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBDC2F0881C800B9C268 /* SavedMealsViewTests.swift */; };
+		13ACDBDF2F0881FA00B9C268 /* RecordingViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBDE2F0881FA00B9C268 /* RecordingViewTests.swift */; };
+		13ACDBE32F08827B00B9C268 /* HistoryViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBE22F08827B00B9C268 /* HistoryViewTests.swift */; };
+		13ACDBE92F0915AF00B9C268 /* MealRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBE82F0915AF00B9C268 /* MealRepository.swift */; };
+		13ACDBEB2F09162700B9C268 /* FirestoreMealRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBEA2F09162700B9C268 /* FirestoreMealRepository.swift */; };
+		13ACDBED2F09188A00B9C268 /* RecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBEC2F09188A00B9C268 /* RecordingViewModel.swift */; };
+		13ACDBEF2F09240100B9C268 /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBEE2F09240100B9C268 /* ProfileSetupViewModel.swift */; };
+		13ACDBF12F09275400B9C268 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13ACDBF02F09275400B9C268 /* ProfileViewModel.swift */; };
 		215FE4272ECD01990030561B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4262ECD01990030561B /* AppDelegate.swift */; };
 		215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215FE4282ECD01990030561B /* SceneDelegate.swift */; };
 		215FE42E2ECD01990030561B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 215FE42C2ECD01990030561B /* Main.storyboard */; };
@@ -71,6 +85,19 @@
 		132AA5492EDB6A86009FE8F1 /* ObjectDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ObjectDetector.mlmodel; sourceTree = "<group>"; };
 		134A45112F0434FD00CB3568 /* DetectedIngredientRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedIngredientRow.swift; sourceTree = "<group>"; };
 		134A45132F0438AC00CB3568 /* SummaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryPill.swift; sourceTree = "<group>"; };
+		13ACDBC42F08747200B9C268 /* NutritionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionServiceTests.swift; sourceTree = "<group>"; };
+		13ACDBCE2F087FC300B9C268 /* DataManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerTests.swift; sourceTree = "<group>"; };
+		13ACDBD02F08801C00B9C268 /* ProfileSetupViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewTests.swift; sourceTree = "<group>"; };
+		13ACDBD42F0880D400B9C268 /* ProfileViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewTests.swift; sourceTree = "<group>"; };
+		13ACDBD82F08815A00B9C268 /* NutritionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionViewModelTests.swift; sourceTree = "<group>"; };
+		13ACDBDC2F0881C800B9C268 /* SavedMealsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMealsViewTests.swift; sourceTree = "<group>"; };
+		13ACDBDE2F0881FA00B9C268 /* RecordingViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewTests.swift; sourceTree = "<group>"; };
+		13ACDBE22F08827B00B9C268 /* HistoryViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewTests.swift; sourceTree = "<group>"; };
+		13ACDBE82F0915AF00B9C268 /* MealRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealRepository.swift; sourceTree = "<group>"; };
+		13ACDBEA2F09162700B9C268 /* FirestoreMealRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreMealRepository.swift; sourceTree = "<group>"; };
+		13ACDBEC2F09188A00B9C268 /* RecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingViewModel.swift; sourceTree = "<group>"; };
+		13ACDBEE2F09240100B9C268 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
+		13ACDBF02F09275400B9C268 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		215FE4232ECD01990030561B /* NutriVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NutriVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		215FE4262ECD01990030561B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		215FE4282ECD01990030561B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -127,6 +154,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13ACDBCB2F087C7D00B9C268 /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,12 +168,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		13ACDBC92F087C7D00B9C268 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		215FE41A2ECD01990030561B = {
 			isa = PBXGroup;
 			children = (
 				215FE4252ECD01990030561B /* NutriVision */,
 				215FE43C2ECD019C0030561B /* NutriVisionTests */,
 				215FE4462ECD019C0030561B /* NutriVisionUITests */,
+				13ACDBC92F087C7D00B9C268 /* Frameworks */,
 				215FE4242ECD01990030561B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -163,6 +199,11 @@
 		215FE4252ECD01990030561B /* NutriVision */ = {
 			isa = PBXGroup;
 			children = (
+				13ACDBF02F09275400B9C268 /* ProfileViewModel.swift */,
+				13ACDBEE2F09240100B9C268 /* ProfileSetupViewModel.swift */,
+				13ACDBEC2F09188A00B9C268 /* RecordingViewModel.swift */,
+				13ACDBEA2F09162700B9C268 /* FirestoreMealRepository.swift */,
+				13ACDBE82F0915AF00B9C268 /* MealRepository.swift */,
 				4E9200072F08259D001B334F /* GoogleService-Info.plist */,
 				4E9200052F057406001B334F /* best_fine_tuned.mlpackage */,
 				4E9200032F0494F2001B334F /* NutritionService.swift */,
@@ -204,6 +245,14 @@
 		215FE43C2ECD019C0030561B /* NutriVisionTests */ = {
 			isa = PBXGroup;
 			children = (
+				13ACDBE22F08827B00B9C268 /* HistoryViewTests.swift */,
+				13ACDBDE2F0881FA00B9C268 /* RecordingViewTests.swift */,
+				13ACDBDC2F0881C800B9C268 /* SavedMealsViewTests.swift */,
+				13ACDBD82F08815A00B9C268 /* NutritionViewModelTests.swift */,
+				13ACDBD42F0880D400B9C268 /* ProfileViewTests.swift */,
+				13ACDBD02F08801C00B9C268 /* ProfileSetupViewTests.swift */,
+				13ACDBCE2F087FC300B9C268 /* DataManagerTests.swift */,
+				13ACDBC42F08747200B9C268 /* NutritionServiceTests.swift */,
 				215FE43D2ECD019C0030561B /* NutriVisionTests.swift */,
 			);
 			path = NutriVisionTests;
@@ -256,6 +305,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				13ACDBCD2F087D2E00B9C268 /* PBXTargetDependency */,
 				215FE43B2ECD019C0030561B /* PBXTargetDependency */,
 			);
 			name = NutriVisionTests;
@@ -316,6 +366,7 @@
 			packageReferences = (
 				4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				4E9200092F082FF4001B334F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				13ACDBC82F087AC500B9C268 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 			);
 			productRefGroup = 215FE4242ECD01990030561B /* Products */;
 			projectDirPath = "";
@@ -370,8 +421,10 @@
 				4E21A74A2EFF355C006E8737 /* Meal.swift in Sources */,
 				4E21A75E2F00AB8A006E8737 /* AISuggestionViewModel.swift in Sources */,
 				4E21A7582F007B02006E8737 /* HistoryView.swift in Sources */,
+				13ACDBEB2F09162700B9C268 /* FirestoreMealRepository.swift in Sources */,
 				134A45122F0434FD00CB3568 /* DetectedIngredientRow.swift in Sources */,
 				134A45142F0438AC00CB3568 /* SummaryPill.swift in Sources */,
+				13ACDBE92F0915AF00B9C268 /* MealRepository.swift in Sources */,
 				215FE4272ECD01990030561B /* AppDelegate.swift in Sources */,
 				4E9200062F057406001B334F /* best_fine_tuned.mlpackage in Sources */,
 				4E9200042F0494F2001B334F /* NutritionService.swift in Sources */,
@@ -382,6 +435,7 @@
 				4E21A7442EFEF949006E8737 /* NutritionStatsView.swift in Sources */,
 				4E21A74E2EFF4BF1006E8737 /* Ingredient.swift in Sources */,
 				4ED20AA42EF9CB5F0050B6D7 /* AppState.swift in Sources */,
+				13ACDBEF2F09240100B9C268 /* ProfileSetupViewModel.swift in Sources */,
 				215FE4292ECD01990030561B /* SceneDelegate.swift in Sources */,
 				4E21A7462EFF0452006E8737 /* NutritionViewModel.swift in Sources */,
 				4ED20A982EF8D2740050B6D7 /* UserInfo.swift in Sources */,
@@ -389,7 +443,9 @@
 				4E21A7522EFF675D006E8737 /* RecordingView.swift in Sources */,
 				4ED20AA22EF9C4BF0050B6D7 /* ProfileView.swift in Sources */,
 				4ED20AA62EF9CCDA0050B6D7 /* RootView.swift in Sources */,
+				13ACDBED2F09188A00B9C268 /* RecordingViewModel.swift in Sources */,
 				4E21A7502EFF5588006E8737 /* DailyNutrition.swift in Sources */,
+				13ACDBF12F09275400B9C268 /* ProfileViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,7 +453,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13ACDBDF2F0881FA00B9C268 /* RecordingViewTests.swift in Sources */,
+				13ACDBC52F08747A00B9C268 /* NutritionServiceTests.swift in Sources */,
+				13ACDBCF2F087FC300B9C268 /* DataManagerTests.swift in Sources */,
+				13ACDBD92F08815A00B9C268 /* NutritionViewModelTests.swift in Sources */,
+				13ACDBD12F08801C00B9C268 /* ProfileSetupViewTests.swift in Sources */,
 				215FE43E2ECD019C0030561B /* NutriVisionTests.swift in Sources */,
+				13ACDBD52F0880D400B9C268 /* ProfileViewTests.swift in Sources */,
+				13ACDBE32F08827B00B9C268 /* HistoryViewTests.swift in Sources */,
+				13ACDBDD2F0881C800B9C268 /* SavedMealsViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +477,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		13ACDBCD2F087D2E00B9C268 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 13ACDBCC2F087D2E00B9C268 /* ViewInspector */;
+		};
 		215FE43B2ECD019C0030561B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 215FE4222ECD01990030561B /* NutriVision */;
@@ -566,7 +634,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7GRQVR3UZS;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NutriVision/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information";
@@ -597,7 +665,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7GRQVR3UZS;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NutriVision/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information.\nThis app uses the camera to detect food and display nutritional information";
@@ -628,6 +696,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MARKETING_VERSION = 1.0;
@@ -647,6 +716,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MARKETING_VERSION = 1.0;
@@ -665,6 +735,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ipleiria.pt.NutriVisionUITests;
@@ -682,6 +753,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHW3PS4YM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ipleiria.pt.NutriVisionUITests;
@@ -735,6 +807,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		13ACDBC82F087AC500B9C268 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.3;
+			};
+		};
 		4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -754,6 +834,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		13ACDBCA2F087C7D00B9C268 /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13ACDBC82F087AC500B9C268 /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
+		13ACDBCC2F087D2E00B9C268 /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13ACDBC82F087AC500B9C268 /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
 		4E21A7672F00BDC6006E8737 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4E21A7662F00BDC6006E8737 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

@@ -133,7 +133,9 @@ struct HomeView: View {
                     }
                 }
                 .sheet(isPresented: $showingProfile) {
-                    ProfileView(user: $currentUser)
+                    if let currentUser = currentUser {
+                        ProfileView(user: currentUser)
+                    }
                 }
                 .onAppear {
                     if appState.isLoggedIn {

@@ -16,8 +16,8 @@ class NutritionService {
     private static var lastGlobalCallTime: Date?
     private static let minInterval: TimeInterval = 6.5 // ~9 calls per minute
 
-    init(appId: String = "a4eb991b",
-        appKey: String = "abea559f58e2c8542b4d117e375317ac",
+    init(appId: String = "51ff2ea1",
+        appKey: String = "9a22bafc11a8098a6d547f809b6bf3ec",
         session: URLSession = .shared) {
         self.appId = appId
         self.appKey = appKey
